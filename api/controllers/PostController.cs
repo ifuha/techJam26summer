@@ -22,13 +22,48 @@ public class PostController : ControllerBase
     p.Title,
     p.UserId,
     p.ReportMassege,
-    p.Image,
-    p.Movie,
     p.Subscription,
     p.CreateAt,
     p.SupportId,
     p.Likes.Count,
-    p.PostTags.Select(pt => pt.Tag!.TagName).ToList());
+    p.PostTags.Select(pt => pt.Tag!.TagName).ToList(),
+    p.Media
+      .OrderBy(m => m.SortOrder)
+      .Select(m => new PostMediaDto(m.PostMediaId, m.Url, m.Type.ToString(), m.SortOrder))
+      .ToList());
+
+  private static bool TryBuildMedia(
+    List<PostMediaInputDto>? input,
+    out List<Model.PostMedia> media,
+    out string? error)
+  {
+    media = new List<Model.PostMedia>();
+    error = null;
+
+    if (input is null)
+    {
+      return true;
+    }
+
+    for (var i = 0; i < input.Count; i++)
+    {
+      if (!Enum.TryParse<Model.PostMediaType>(input[i].Type, ignoreCase: true, out var type))
+      {
+        error = $"Media[{i}].Typeが不正です(Image または Movie を指定してください)。";
+        return false;
+      }
+
+      media.Add(new Model.PostMedia
+      {
+        PostMediaId = Guid.NewGuid(),
+        Url = input[i].Url,
+        Type = type,
+        SortOrder = i,
+      });
+    }
+
+    return true;
+  }
 
   [HttpGet("/api/Posts")]
   public async Task<ActionResult<List<PostDto>>> GetPosts()
@@ -36,6 +71,7 @@ public class PostController : ControllerBase
     var posts = await _db.Posts
       .Include(p => p.Likes)
       .Include(p => p.PostTags).ThenInclude(pt => pt.Tag)
+      .Include(p => p.Media)
       .OrderByDescending(p => p.CreateAt)
       .ToListAsync();
     return Ok(posts.Select(ToDto));
@@ -47,6 +83,7 @@ public class PostController : ControllerBase
     var post = await _db.Posts
       .Include(p => p.Likes)
       .Include(p => p.PostTags).ThenInclude(pt => pt.Tag)
+      .Include(p => p.Media)
       .FirstOrDefaultAsync(p => p.PostId == id);
     return post is null ? NotFound() : Ok(ToDto(post));
   }
@@ -63,17 +100,21 @@ public class PostController : ControllerBase
       return BadRequest("指定されたSupportが存在しません。");
     }
 
+    if (!TryBuildMedia(request.Media, out var media, out var mediaError))
+    {
+      return BadRequest(mediaError);
+    }
+
     var post = new Model.Post
     {
       PostId = Guid.NewGuid(),
       Title = request.Title,
       UserId = userId,
       ReportMassege = request.ReportMassege,
-      Image = request.Image,
-      Movie = request.Movie,
       Subscription = request.Subscription,
       SupportId = request.SupportId,
       CreateAt = DateTime.UtcNow,
+      Media = media,
     };
 
     _db.Posts.Add(post);
@@ -90,6 +131,7 @@ public class PostController : ControllerBase
     var post = await _db.Posts
       .Include(p => p.Likes)
       .Include(p => p.PostTags).ThenInclude(pt => pt.Tag)
+      .Include(p => p.Media)
       .FirstOrDefaultAsync(p => p.PostId == id);
 
     if (post is null)
@@ -101,12 +143,24 @@ public class PostController : ControllerBase
       return Forbid();
     }
 
+    if (!TryBuildMedia(request.Media, out var media, out var mediaError))
+    {
+      return BadRequest(mediaError);
+    }
+
     if (request.Title is not null) post.Title = request.Title;
     if (request.ReportMassege is not null) post.ReportMassege = request.ReportMassege;
-    if (request.Image is not null) post.Image = request.Image;
-    if (request.Movie is not null) post.Movie = request.Movie;
     if (request.Subscription is not null) post.Subscription = request.Subscription;
     if (request.SupportId is not null) post.SupportId = request.SupportId.Value;
+    if (request.Media is not null)
+    {
+      _db.PostMedia.RemoveRange(post.Media);
+      foreach (var m in media)
+      {
+        m.PostId = post.PostId;
+      }
+      post.Media = media;
+    }
 
     await _db.SaveChangesAsync();
     return Ok(ToDto(post));

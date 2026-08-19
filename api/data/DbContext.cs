@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
   public DbSet<Follow> Follows => Set<Follow>();
   public DbSet<Like> Likes => Set<Like>();
   public DbSet<Post> Posts => Set<Post>();
+  public DbSet<PostMedia> PostMedia => Set<PostMedia>();
   public DbSet<PostTag> PostTags => Set<PostTag>();
   public DbSet<Subscription> Subscriptions => Set<Subscription>();
   public DbSet<Support> Supports => Set<Support>();
@@ -38,5 +39,6 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<PostTag>().HasKey(pt => new {pt.PostId, pt.TagId});
     modelBuilder.Entity<Like>().HasIndex(l => new { l.UserId, l.PostId }).IsUnique();
     modelBuilder.Entity<Subscription>().Property(r => r.Status).HasConversion<string>();
+    modelBuilder.Entity<PostMedia>().Property(m => m.Type).HasConversion<string>();
   }
 }

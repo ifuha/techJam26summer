@@ -3,6 +3,7 @@ using System;
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819084138_AddSubscriptionCreateAt")]
+    partial class AddSubscriptionCreateAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +84,12 @@ namespace api.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Movie")
+                        .HasColumnType("text");
+
                     b.Property<string>("ReportMassege")
                         .IsRequired()
                         .HasColumnType("text");
@@ -105,33 +114,6 @@ namespace api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("Api.Model.PostMedia", b =>
-                {
-                    b.Property<Guid>("PostMediaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PostId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("PostMediaId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostMedia");
                 });
 
             modelBuilder.Entity("Api.Model.PostTag", b =>
@@ -316,17 +298,6 @@ namespace api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Api.Model.PostMedia", b =>
-                {
-                    b.HasOne("Api.Model.Post", "Post")
-                        .WithMany("Media")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-                });
-
             modelBuilder.Entity("Api.Model.PostTag", b =>
                 {
                     b.HasOne("Api.Model.Post", "Post")
@@ -390,8 +361,6 @@ namespace api.Migrations
             modelBuilder.Entity("Api.Model.Post", b =>
                 {
                     b.Navigation("Likes");
-
-                    b.Navigation("Media");
 
                     b.Navigation("PostTags");
                 });
