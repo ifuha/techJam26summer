@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddHostedService<SubscriptionExpirationService>();
 
 builder.Services.Configure<CloudflareR2Options>(builder.Configuration.GetSection("CloudflareR2"));
 builder.Services.AddSingleton<ICloudflareR2ClientFactory, CloudflareR2ClientFactory>();
@@ -41,6 +42,17 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+
+const string WebClientCorsPolicy = "WebClient";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(WebClientCorsPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -82,6 +94,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(WebClientCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
