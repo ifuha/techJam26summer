@@ -6,6 +6,7 @@ public record UserPublicDto(
   string? Avatar,
   bool JobOrCommonMan,
   string? ProductName,
+  string? Prefecture,
   List<string> Tags,
   DateTime CreateAt);
 
@@ -16,8 +17,9 @@ public record UserAccountDto(
   string? Avatar,
   bool JobOrCommonMan,
   string? Address,
+  string? Prefecture,
   string? ProductName,
   List<string> Tags,
   DateTime CreateAt);
 
-public record UserPatchRequestDto(string? Name, string? Avatar, string? Address, string? ProductName);
+public record UserPatchRequestDto(string? Name, string? Avatar, string? Address, string? Prefecture, string? ProductName);

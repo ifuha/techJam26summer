@@ -7,6 +7,7 @@ public record RegisterRequestDto(
   bool JobOrCommonMan,
   string? Avatar,
   string? Address,
+  string? Prefecture,
   string? ProductName);
 
 public record LoginRequestDto(string Email, string Password);
