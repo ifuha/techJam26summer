@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Dto;
+using Api.Helpers;
 using Api.Model;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,11 @@ public class AuthController : ControllerBase
       return Conflict("このメールアドレスは既に使用されています。");
     }
 
+    if (request.Prefecture is not null && !Prefectures.IsValid(request.Prefecture))
+    {
+      return BadRequest("Prefectureが不正です(都道府県名を指定してください)。");
+    }
+
     var user = new User
     {
       UserId = Guid.NewGuid(),
@@ -37,6 +43,7 @@ public class AuthController : ControllerBase
       JobOrCommonMan = request.JobOrCommonMan,
       Avatar = request.Avatar,
       Address = request.Address,
+      Prefecture = request.Prefecture,
       ProductName = request.ProductName,
       CreateAt = DateTime.UtcNow,
     };

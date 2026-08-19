@@ -21,13 +21,15 @@
 
 | Method | Path | 認証 | 説明 |
 |---|---|---|---|
-| GET | `/api/Users` | 不要 | ユーザー一覧(公開情報のみ: Name/Avatar/JobOrCommonMan/ProductName/Tags/CreateAt) |
+| GET | `/api/Users` | 不要 | ユーザー一覧(公開情報のみ: Name/Avatar/JobOrCommonMan/ProductName/Prefecture/Tags/CreateAt) |
 | GET | `/api/User/{id}` | 不要 | ユーザー単体取得(公開情報のみ) |
-| GET | `/api/User/account/{id}` | 必須 | アカウント詳細(Email/Address/Tagsを含む) |
-| PATCH | `/api/User/Patch` | 必須 | 自分の情報を編集(Name/Avatar/Address/ProductNameのみ、idはJWTから解決) |
+| GET | `/api/User/account/{id}` | 必須 | アカウント詳細(Email/Address/Prefecture/Tagsを含む) |
+| PATCH | `/api/User/Patch` | 必須 | 自分の情報を編集(Name/Avatar/Address/Prefecture/ProductNameのみ、idはJWTから解決) |
 | DELETE | `/api/User/delete` | 必須 | 自分のアカウントを削除(自分が絡むFollowも合わせて削除、UserTagはCascadeで自動削除) |
 
 `ProductName`はそのユーザーが何をやっているか/何のプロダクトの人かを表す任意項目。
+
+`Prefecture`は地図にピンを立てるための都道府県(47都道府県のいずれかにバリデーション、`Helpers/Prefectures.cs`)。`Address`は市区町村以降の自由記述で、地図表示には使わない想定。register/patch時に不正な値は400になる。
 
 ## Post (`PostController`)
 
