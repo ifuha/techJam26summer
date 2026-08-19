@@ -9,6 +9,7 @@ public class User
   public string? Avatar { get;set; } = string.Empty;
   public bool JobOrCommonMan { get;set; }
   public string? Address { get;set; }
+  public string? ProductName { get;set; }
   public DateTime CreateAt { get;set; }
   public ICollection<Post> Posts { get;set; } = new List<Post>();
   public ICollection<Support> Supports { get;set; } = new List<Support>();

@@ -5,6 +5,7 @@ public record UserPublicDto(
   string Name,
   string? Avatar,
   bool JobOrCommonMan,
+  string? ProductName,
   DateTime CreateAt);
 
 public record UserAccountDto(
@@ -14,6 +15,7 @@ public record UserAccountDto(
   string? Avatar,
   bool JobOrCommonMan,
   string? Address,
+  string? ProductName,
   DateTime CreateAt);
 
-public record UserPatchRequestDto(string? Name, string? Avatar, string? Address);
+public record UserPatchRequestDto(string? Name, string? Avatar, string? Address, string? ProductName);

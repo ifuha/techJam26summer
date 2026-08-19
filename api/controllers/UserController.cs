@@ -21,7 +21,7 @@ public class UserController : ControllerBase
   public async Task<ActionResult<List<UserPublicDto>>> GetUsers()
   {
     var users = await _db.Users
-      .Select(u => new UserPublicDto(u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.CreateAt))
+      .Select(u => new UserPublicDto(u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.CreateAt))
       .ToListAsync();
     return Ok(users);
   }
@@ -31,7 +31,7 @@ public class UserController : ControllerBase
   {
     var user = await _db.Users
       .Where(u => u.UserId == id)
-      .Select(u => new UserPublicDto(u.UserId, u.Name,  u.Avatar, u.JobOrCommonMan, u.CreateAt))
+      .Select(u => new UserPublicDto(u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
   }
@@ -42,7 +42,7 @@ public class UserController : ControllerBase
   {
     var user = await _db.Users
       .Where(u => u.UserId == id)
-      .Select(u => new UserAccountDto(u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.CreateAt))
+      .Select(u => new UserAccountDto(u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.ProductName, u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
   }
@@ -61,10 +61,11 @@ public class UserController : ControllerBase
     if (request.Name is not null) user.Name = request.Name;
     if (request.Avatar is not null) user.Avatar = request.Avatar;
     if (request.Address is not null) user.Address = request.Address;
+    if (request.ProductName is not null) user.ProductName = request.ProductName;
 
     await _db.SaveChangesAsync();
 
-    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.CreateAt));
+    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.ProductName, user.CreateAt));
   }
 
   [Authorize]
