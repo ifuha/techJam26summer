@@ -42,6 +42,17 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+const string WebClientCorsPolicy = "WebClient";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(WebClientCorsPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -82,6 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(WebClientCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

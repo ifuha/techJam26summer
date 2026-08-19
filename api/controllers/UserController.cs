@@ -31,7 +31,7 @@ public class UserController : ControllerBase
   {
     var user = await _db.Users
       .Where(u => u.UserId == id)
-      .Select(u => new UserPublicDto(u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.CreateAt))
+      .Select(u => new UserPublicDto(u.UserId, u.Name,  u.Avatar, u.JobOrCommonMan, u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
   }
