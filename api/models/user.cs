@@ -17,4 +17,5 @@ public class User
   public ICollection<Follow> Followers { get;set; } = new List<Follow>();
   public ICollection<Follow> Followeds { get;set; } = new List<Follow>();
   public ICollection<Tag> Tags { get;set; } = new List<Tag>();
+  public ICollection<UserTag> ProfileTags { get;set; } = new List<UserTag>();
 }
