@@ -37,6 +37,7 @@ public class AuthController : ControllerBase
       JobOrCommonMan = request.JobOrCommonMan,
       Avatar = request.Avatar,
       Address = request.Address,
+      ProductName = request.ProductName,
       CreateAt = DateTime.UtcNow,
     };
 

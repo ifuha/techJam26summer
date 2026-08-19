@@ -3,6 +3,7 @@ using System;
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819094821_AddUserProductName")]
+    partial class AddUserProductName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -262,21 +265,6 @@ namespace api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Api.Model.UserTag", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("UserId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("UserTags");
-                });
-
             modelBuilder.Entity("Api.Model.Follow", b =>
                 {
                     b.HasOne("Api.Model.User", "Followed")
@@ -405,25 +393,6 @@ namespace api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Api.Model.UserTag", b =>
-                {
-                    b.HasOne("Api.Model.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Api.Model.User", "User")
-                        .WithMany("ProfileTags")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tag");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Api.Model.Post", b =>
                 {
                     b.Navigation("Likes");
@@ -445,8 +414,6 @@ namespace api.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("ProfileTags");
 
                     b.Navigation("Subscriptions");
 

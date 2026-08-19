@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
   public DbSet<Support> Supports => Set<Support>();
   public DbSet<Tag> Tags => Set<Tag>();
   public DbSet<User> Users => Set<User>();
+  public DbSet<UserTag> UserTags => Set<UserTag>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
@@ -37,6 +38,7 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<Follow>().HasIndex(f => new { f.FollowerId, f.FollowedId }).IsUnique();
     modelBuilder.Entity<Post>();
     modelBuilder.Entity<PostTag>().HasKey(pt => new {pt.PostId, pt.TagId});
+    modelBuilder.Entity<UserTag>().HasKey(ut => new { ut.UserId, ut.TagId });
     modelBuilder.Entity<Like>().HasIndex(l => new { l.UserId, l.PostId }).IsUnique();
     modelBuilder.Entity<Subscription>().Property(r => r.Status).HasConversion<string>();
     modelBuilder.Entity<PostMedia>().Property(m => m.Type).HasConversion<string>();

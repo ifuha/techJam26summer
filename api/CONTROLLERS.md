@@ -21,11 +21,13 @@
 
 | Method | Path | 認証 | 説明 |
 |---|---|---|---|
-| GET | `/api/Users` | 不要 | ユーザー一覧(公開情報のみ: Name/Avatar/JobOrCommonMan/CreateAt) |
+| GET | `/api/Users` | 不要 | ユーザー一覧(公開情報のみ: Name/Avatar/JobOrCommonMan/ProductName/Tags/CreateAt) |
 | GET | `/api/User/{id}` | 不要 | ユーザー単体取得(公開情報のみ) |
-| GET | `/api/User/account/{id}` | 必須 | アカウント詳細(Email/Addressを含む) |
-| PATCH | `/api/User/Patch` | 必須 | 自分の情報を編集(Name/Avatar/Addressのみ、idはJWTから解決) |
-| DELETE | `/api/User/delete` | 必須 | 自分のアカウントを削除(自分が絡むFollowも合わせて削除) |
+| GET | `/api/User/account/{id}` | 必須 | アカウント詳細(Email/Address/Tagsを含む) |
+| PATCH | `/api/User/Patch` | 必須 | 自分の情報を編集(Name/Avatar/Address/ProductNameのみ、idはJWTから解決) |
+| DELETE | `/api/User/delete` | 必須 | 自分のアカウントを削除(自分が絡むFollowも合わせて削除、UserTagはCascadeで自動削除) |
+
+`ProductName`はそのユーザーが何をやっているか/何のプロダクトの人かを表す任意項目。
 
 ## Post (`PostController`)
 
@@ -87,6 +89,16 @@ api.md原案のルートは他エンドポイントと衝突する形だった�
 | GET | `/api/postTag/{postId}` | 不要 | 投稿に紐づくタグ一覧 |
 | POST | `/api/postTag` | 必須 | 投稿にタグを紐付け(投稿者本人のみ、403 Forbidden) |
 | DELETE | `/api/postTag/{postId}/{tagId}` | 必須 | 紐付け解除(投稿者本人のみ) |
+
+## UserTag (`UserTagController`)
+
+ユーザーのプロフィールに「何をやっている人か」を表すTagを付けられる機能。`Tag`テーブルはPostTagと共用。**JobOrCommonMan == trueのユーザー(Job系)のみ**付与可能で、一般ユーザーへの付与は400エラーになる。対象は常に自分自身(JWTから解決)。
+
+| Method | Path | 認証 | 説明 |
+|---|---|---|---|
+| GET | `/api/userTag/{userId}` | 不要 | そのユーザーに付いているTag一覧 |
+| POST | `/api/userTag` | 必須 | 自分にTagを付与(ボディに`tagId`)。一般ユーザーは400 |
+| DELETE | `/api/userTag/{tagId}` | 必須 | 自分からTagを外す |
 
 ## Follow (`FollowController`)
 
