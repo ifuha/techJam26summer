@@ -7,9 +7,9 @@ public class Post
   public Guid UserId { get;set; }
   public User? User { get;set; }
   public string ReportMassege { get;set; } = string.Empty;
-  public string Image { get;set; } = string.Empty;
-  public string Movie { get;set; } = string.Empty;
-  public string Subscription { get;set; } = string.Empty;
+  public string? Image { get;set; } = string.Empty;
+  public string? Movie { get;set; } = string.Empty;
+  public string? Subscription { get;set; } = string.Empty;
   public DateTime CreateAt { get;set; }
   public Guid SupportId { get;set; }
   public Support? Support { get;set; }

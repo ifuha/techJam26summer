@@ -161,3 +161,5 @@
 /Users/itou/techJam26summer/api/bin/Debug/net9.0/runtimes/win-arm64/native/e_sqlite3.dll
 /Users/itou/techJam26summer/api/bin/Debug/net9.0/runtimes/win-x64/native/e_sqlite3.dll
 /Users/itou/techJam26summer/api/bin/Debug/net9.0/runtimes/win-x86/native/e_sqlite3.dll
+/Users/itou/techJam26summer/api/bin/Debug/net9.0/DotNetEnv.dll
+/Users/itou/techJam26summer/api/bin/Debug/net9.0/Superpower.dll
