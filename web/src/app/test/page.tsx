@@ -1,8 +1,8 @@
-import { LightPlan } from "@/components/lightPlan_components"
+import { PremiumPlan } from "@/components/premiumPlan_components"
 
 function App(){
     return(
-        <LightPlan></LightPlan>
+        <PremiumPlan></PremiumPlan>
     )
 }
 
