@@ -14,7 +14,11 @@ export function PremiumPlan(){
                     <div
                     className="mr-4.5 w-full max-w-15 aspect-square flex items-center justify-center  rounded-full bg-[#C9DAA5] shrink-0"
                     >
+                        <div
+                        className="pr-1.5"
+                        >
                         <Icon name="crown" size={25}></Icon>
+                        </div>
                     </div>
 
                     <div
