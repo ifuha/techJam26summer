@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Map } from "@/components/map";
 import { Card } from "@/components/card";
 import { CraftCard } from "@/components/craft-card";
@@ -13,10 +13,6 @@ const Home = () => {
   const [craftInView, setCraftInView] = useState<CraftSummary | null>(null);
   const [selectedCraft, setSelectedCraft] = useState<CraftSummary | null>(null);
   const [filterTag, setFilterTag] = useState<string | null>(null);
-
-  useEffect(() => {
-    setSelectedCraft(null);
-  }, [craftInView?.craftId]);
 
   return (
     <div className="flex flex-col w-screen h-dvh">

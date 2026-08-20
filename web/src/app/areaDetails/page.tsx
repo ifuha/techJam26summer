@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Head } from "@/components/head";
 import type { CraftDetail } from "@/lib/type";
 import { getCraft } from "@/lib/api";
-import Image from "next/image";
 
 function AreaDetailsContent() {
   const searchParams = useSearchParams();
@@ -35,7 +34,6 @@ function AreaDetailsContent() {
               />
             )}
           </div>
-
           <div className="px-4 py-3.25">
             <div className="flex items-baseline gap-2">
               <div className="text-[24px] font-bold text-[#000000]">
@@ -47,7 +45,6 @@ function AreaDetailsContent() {
                 </div>
               )}
             </div>
-
             {(detail.category || detail.certification) && (
               <div className="flex flex-wrap gap-2 mt-2.75">
                 {detail.category && (
@@ -62,13 +59,11 @@ function AreaDetailsContent() {
                 )}
               </div>
             )}
-
             {detail.description && (
-              <p className="mt-3.25 text-[13px] text-[#000000] leading-relaxed">
+              <div className="mt-3.25 text-[13px] text-[#000000] leading-relaxed">
                 {detail.description}
-              </p>
+              </div>
             )}
-
             {detail.features.length > 0 && (
               <div className="mt-4.25">
                 <div className="text-[15px] font-bold text-[#000000]">特徴</div>
