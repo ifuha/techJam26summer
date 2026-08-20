@@ -1,7 +1,9 @@
 import { Group } from "./svg/group";
+import { Heart } from "./svg/heart";
 
 const icons = {
   group: Group,
+  heart: Heart,
 } as const;
 export type IconProps = {
   size: number;
