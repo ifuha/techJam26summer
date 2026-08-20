@@ -15,7 +15,6 @@ export function PremiumPlan(){
                     className="mr-4.5 w-full max-w-15 aspect-square flex items-center justify-center  rounded-full bg-[#C9DAA5] shrink-0"
                     >
                         <Icon name="crown" size={25}></Icon>
-                        <Icon name="carve" size={1.45}></Icon>
                     </div>
 
                     <div

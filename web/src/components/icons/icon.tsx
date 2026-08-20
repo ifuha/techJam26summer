@@ -4,7 +4,6 @@ import { Leaf } from "./svg/leaf";
 import { Check } from "./svg/check";
 import { Star } from "./svg/star";
 import { Crown } from "./svg/crown";
-import { Carve } from "./svg/carve";
 
 const icons = {
   group: Group,
@@ -13,7 +12,6 @@ const icons = {
   check: Check,
   star:Star,
   crown:Crown,
-  carve:Carve,
 } as const;
 export type IconProps = {
   size: number;
