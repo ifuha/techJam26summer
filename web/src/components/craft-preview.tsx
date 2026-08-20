@@ -15,7 +15,7 @@ export function CraftPreview({ craft, onSelect }: CraftPreviewProps) {
       type="button"
       onClick={onSelect}
       key={craft.craftId}
-      className="absolute top-4 left-4 flex items-center gap-3 bg-[#FAF9F6] rounded-sm shadow-lg p-3 text-left animate-card-content"
+      className="absolute top-4 left-4 flex items-center gap-3 bg-[#FAF9F6] rounded-sm shadow-lg p-3 text-left animate-card-content cursor-pointer"
     >
       <div className="min-w-0">
         <div className="text-[20px] font-bold text-[#000000]">

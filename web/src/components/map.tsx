@@ -12,15 +12,35 @@ const MAP_STYLE_ID = "01a01db7-e4de-76e5-8a2c-b4a303f2fbb9";
 const CRAFT_ZOOM_THRESHOLD = 9;
 
 type LocatedCraft = CraftSummary & { latitude: number; longitude: number };
+type LocatedUser = UserPublic & { latitude: number; longitude: number };
 
 export type MapProps = {
   onPinClick?: (user: UserPublic) => void;
   onCraftInView?: (craft: CraftSummary | null) => void;
+  filterTag?: string | null;
 };
 
-export function Map({ onPinClick, onCraftInView }: MapProps) {
+export function Map({ onPinClick, onCraftInView, filterTag }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapTilerMap | null>(null);
+  const userMarkersRef = useRef<{ user: LocatedUser; element: HTMLElement }[]>(
+    [],
+  );
+  const filterTagRef = useRef<string | null | undefined>(filterTag);
+  filterTagRef.current = filterTag;
+
+  const applyUserFilter = () => {
+    const tag = filterTagRef.current;
+    userMarkersRef.current.forEach(({ user, element }) => {
+      const visible = !tag || user.tags.includes(tag);
+      element.style.display = visible ? "" : "none";
+    });
+  };
+
+  useEffect(() => {
+    applyUserFilter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterTag]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -74,30 +94,32 @@ export function Map({ onPinClick, onCraftInView }: MapProps) {
 
     getUsers()
       .then((users) => {
-        users
-          .filter(
-            (
-              user,
-            ): user is typeof user & { latitude: number; longitude: number } =>
-              user.latitude !== null && user.longitude !== null,
-          )
-          .forEach((user) => {
-            const el = document.createElement("img");
-            el.src = "/pin.svg";
-            el.alt = "";
-            el.style.width = "32px";
-            el.style.height = "32px";
-            el.style.cursor = "pointer";
+        const located = users.filter(
+          (user): user is LocatedUser =>
+            user.latitude !== null && user.longitude !== null,
+        );
 
-            const marker = new Marker({ element: el })
-              .setLngLat([user.longitude, user.latitude])
-              .addTo(map);
+        userMarkersRef.current = located.map((user) => {
+          const el = document.createElement("img");
+          el.src = "/pin.svg";
+          el.alt = "";
+          el.style.width = "32px";
+          el.style.height = "32px";
+          el.style.cursor = "pointer";
 
-            marker.getElement().addEventListener("click", (event) => {
-              event.stopPropagation();
-              onPinClick?.(user);
-            });
+          new Marker({ element: el })
+            .setLngLat([user.longitude, user.latitude])
+            .addTo(map);
+
+          el.addEventListener("click", (event) => {
+            event.stopPropagation();
+            onPinClick?.(user);
           });
+
+          return { user, element: el };
+        });
+
+        applyUserFilter();
       })
       .catch((error) => {
         console.error("Failed to load users for map:", error);
