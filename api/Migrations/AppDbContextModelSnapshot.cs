@@ -81,12 +81,6 @@ namespace api.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Movie")
-                        .HasColumnType("text");
-
                     b.Property<string>("ReportMassege")
                         .IsRequired()
                         .HasColumnType("text");
@@ -113,6 +107,33 @@ namespace api.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("Api.Model.PostMedia", b =>
+                {
+                    b.Property<Guid>("PostMediaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("PostMediaId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostMedia");
+                });
+
             modelBuilder.Entity("Api.Model.PostTag", b =>
                 {
                     b.Property<Guid>("PostId")
@@ -133,6 +154,9 @@ namespace api.Migrations
                     b.Property<Guid>("SubscriptionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .HasColumnType("character varying(1)");
@@ -230,9 +254,30 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Prefecture")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("text");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Api.Model.UserTag", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("UserTags");
                 });
 
             modelBuilder.Entity("Api.Model.Follow", b =>
@@ -290,6 +335,17 @@ namespace api.Migrations
                     b.Navigation("Support");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Api.Model.PostMedia", b =>
+                {
+                    b.HasOne("Api.Model.Post", "Post")
+                        .WithMany("Media")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Api.Model.PostTag", b =>
@@ -352,9 +408,30 @@ namespace api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Api.Model.UserTag", b =>
+                {
+                    b.HasOne("Api.Model.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Api.Model.User", "User")
+                        .WithMany("ProfileTags")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Api.Model.Post", b =>
                 {
                     b.Navigation("Likes");
+
+                    b.Navigation("Media");
 
                     b.Navigation("PostTags");
                 });
@@ -371,6 +448,8 @@ namespace api.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("ProfileTags");
 
                     b.Navigation("Subscriptions");
 
