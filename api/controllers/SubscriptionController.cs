@@ -42,12 +42,13 @@ public class SubscriptionController : ControllerBase
       SupportId = request.SupportId,
       UserId = userId,
       Status = true,
+      CreateAt = DateTime.UtcNow,
     };
 
     _db.Subscriptions.Add(subscription);
     await _db.SaveChangesAsync();
 
-    return Ok(new SubscriptionStatusDto(true, subscription.Status));
+    return Ok(new SubscriptionStatusDto(true, subscription.Status, subscription.CreateAt.AddMonths(1)));
   }
 
   [Authorize]
@@ -75,6 +76,7 @@ public class SubscriptionController : ControllerBase
     var subscription = await _db.Subscriptions
       .FirstOrDefaultAsync(s => s.SupportId == id && s.UserId == userId);
 
-    return Ok(new SubscriptionStatusDto(subscription is not null, subscription?.Status));
+    var expiresAt = subscription?.CreateAt.AddMonths(1);
+    return Ok(new SubscriptionStatusDto(subscription is not null, subscription?.Status, expiresAt));
   }
 }

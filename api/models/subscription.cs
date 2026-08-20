@@ -8,4 +8,5 @@ public class Subscription
   public Guid UserId { get;set; }
   public User? User { get;set; }
   public bool? Status { get;set; }
+  public DateTime CreateAt { get;set; }
 }

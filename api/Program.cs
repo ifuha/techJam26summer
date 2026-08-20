@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddSingleton<JwtTokenService>();
+builder.Services.AddHostedService<SubscriptionExpirationService>();
 
 builder.Services.Configure<CloudflareR2Options>(builder.Configuration.GetSection("CloudflareR2"));
 builder.Services.AddSingleton<ICloudflareR2ClientFactory, CloudflareR2ClientFactory>();
