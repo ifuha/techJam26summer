@@ -9,6 +9,14 @@ import { Bookmark } from "./svg/bookmark";
 import { Settings } from "./svg/settings";
 import { Help } from "./svg/help";
 import { Logout } from "./svg/logout";
+import { GraduationCap } from "./svg/graduation-cap";
+import { Calendar } from "./svg/calendar";
+import { Document } from "./svg/document";
+import { Clock } from "./svg/clock";
+import { Lock } from "./svg/lock";
+import { Leaf } from "./svg/leaf";
+import { Star } from "./svg/star";
+import { Pro } from "./svg/Pro";
 
 const icons = {
   group: Group,
@@ -22,6 +30,14 @@ const icons = {
   settings: Settings,
   help: Help,
   logout: Logout,
+  "graduation-cap": GraduationCap,
+  calendar: Calendar,
+  document: Document,
+  clock: Clock,
+  lock: Lock,
+  leaf: Leaf,
+  star: Star,
+  pro: Pro,
 } as const;
 export type IconProps = {
   size: number;

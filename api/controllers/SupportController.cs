@@ -17,6 +17,9 @@ public class SupportController : ControllerBase
     _db = db;
   }
 
+  private static readonly Func<Model.Support, SupportDto> ToDto = s => new SupportDto(
+    s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId);
+
   [Authorize]
   [HttpPost("/api/support")]
   public async Task<ActionResult<SupportDto>> CreateSupport(SupportCreateRequestDto request)
@@ -26,8 +29,10 @@ public class SupportController : ControllerBase
     var support = new Model.Support
     {
       SupportId = Guid.NewGuid(),
+      Name = request.Name,
       IsMonthly = request.IsMonthly,
       Amount = request.Amount,
+      Benefits = request.Benefits ?? new List<string>(),
       UserId = userId,
       CreateAt = DateTime.UtcNow,
     };
@@ -35,8 +40,18 @@ public class SupportController : ControllerBase
     _db.Supports.Add(support);
     await _db.SaveChangesAsync();
 
-    var dto = new SupportDto(support.SupportId, support.IsMonthly, support.Amount, support.CreateAt, support.UserId);
-    return Ok(dto);
+    return Ok(ToDto(support));
+  }
+
+  [HttpGet("/api/support/creator/{userId}")]
+  public async Task<ActionResult<List<SupportDto>>> GetSupportsByCreator(Guid userId)
+  {
+    var supports = await _db.Supports
+      .Where(s => s.UserId == userId)
+      .OrderBy(s => s.Amount)
+      .Select(s => new SupportDto(s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
+      .ToListAsync();
+    return Ok(supports);
   }
 
   [HttpGet("/api/support/{id}/status")]
@@ -44,7 +59,7 @@ public class SupportController : ControllerBase
   {
     var support = await _db.Supports
       .Where(s => s.SupportId == id)
-      .Select(s => new SupportDto(s.SupportId, s.IsMonthly, s.Amount, s.CreateAt, s.UserId))
+      .Select(s => new SupportDto(s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
       .FirstOrDefaultAsync();
     return support is null ? NotFound() : Ok(support);
   }

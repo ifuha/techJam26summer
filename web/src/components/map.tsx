@@ -23,7 +23,7 @@ const PIN_OUTLINE_PATH =
 
 type LocatedCraft = CraftSummary & { latitude: number; longitude: number };
 
-function createCraftPinElement(count: number) {
+function createCraftPinElement(count: number, cityName: string | null) {
   // NOTE: this element is handed to maplibre-gl as the Marker's own
   // `.maplibregl-marker` node, which relies on its stylesheet rule
   // `position: absolute` for coordinate placement. Do NOT set an inline
@@ -32,14 +32,12 @@ function createCraftPinElement(count: number) {
   // insertion order instead of sitting at their map coordinates).
   const root = document.createElement("div");
   root.style.width = `${CRAFT_PIN_WIDTH}px`;
-  root.style.height = `${CRAFT_PIN_HEIGHT}px`;
   root.style.cursor = "pointer";
-  root.style.filter = "drop-shadow(0 1px 2px rgba(0,0,0,0.35))";
 
   const wrapper = document.createElement("div");
   wrapper.style.position = "relative";
-  wrapper.style.width = "100%";
-  wrapper.style.height = "100%";
+  wrapper.style.width = `${CRAFT_PIN_WIDTH}px`;
+  wrapper.style.height = `${CRAFT_PIN_HEIGHT}px`;
   root.appendChild(wrapper);
 
   const svg = document.createElementNS(SVG_NS, "svg");
@@ -77,6 +75,24 @@ function createCraftPinElement(count: number) {
   label.style.pointerEvents = "none";
   label.textContent = String(count);
   wrapper.appendChild(label);
+
+  if (cityName) {
+    const cityLabel = document.createElement("div");
+    cityLabel.style.position = "absolute";
+    cityLabel.style.top = `${CRAFT_PIN_HEIGHT + 2}px`;
+    cityLabel.style.left = "50%";
+    cityLabel.style.transform = "translateX(-50%)";
+    cityLabel.style.padding = "1px 6px";
+    cityLabel.style.borderRadius = "4px";
+    cityLabel.style.color = "#000000";
+    cityLabel.style.fontSize = "11px";
+    cityLabel.style.fontWeight = "bold";
+    cityLabel.style.whiteSpace = "nowrap";
+    cityLabel.style.textAlign = "center";
+    cityLabel.style.pointerEvents = "none";
+    cityLabel.textContent = cityName;
+    wrapper.appendChild(cityLabel);
+  }
 
   const setSelected = (selected: boolean) => {
     fillPath.setAttribute(
@@ -195,6 +211,7 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
         craftMarkersRef.current = crafts.map((craft) => {
           const { root, setSelected } = createCraftPinElement(
             craft.successorCount,
+            craft.address,
           );
 
           new Marker({ element: root })
@@ -203,9 +220,11 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
 
           root.addEventListener("click", (event) => {
             event.stopPropagation();
-            craftMarkersRef.current.forEach(({ craft: other, setSelected: setOtherSelected }) => {
-              setOtherSelected(other.craftId === craft.craftId);
-            });
+            craftMarkersRef.current.forEach(
+              ({ craft: other, setSelected: setOtherSelected }) => {
+                setOtherSelected(other.craftId === craft.craftId);
+              },
+            );
             onCraftClick?.(craft);
           });
 

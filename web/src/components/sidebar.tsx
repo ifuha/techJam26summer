@@ -85,7 +85,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             プロフィールを編集
           </button>
         </div>
-        <div className="border-t" />
+        <div className="border-t border-[#EEEEEE]" />
         <nav className="px-2 py-2 cursor-pointer">
           {MENU_ITEMS.map((item) => {
             const active = item.href !== undefined && pathname === item.href;

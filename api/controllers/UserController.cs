@@ -25,7 +25,7 @@ public class UserController : ControllerBase
   {
     var users = await _db.Users
       .Select(u => new UserPublicDto(
-        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
+        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Bio, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .ToListAsync();
     return Ok(users);
@@ -37,7 +37,7 @@ public class UserController : ControllerBase
     var user = await _db.Users
       .Where(u => u.UserId == id)
       .Select(u => new UserPublicDto(
-        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
+        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Bio, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
@@ -50,7 +50,7 @@ public class UserController : ControllerBase
     var user = await _db.Users
       .Where(u => u.UserId == id)
       .Select(u => new UserAccountDto(
-        u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.ProductName, u.CraftId,
+        u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.ProductName, u.Bio, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
@@ -93,6 +93,7 @@ public class UserController : ControllerBase
     if (request.Address is not null) user.Address = request.Address;
     if (request.Prefecture is not null) user.Prefecture = request.Prefecture;
     if (request.ProductName is not null) user.ProductName = request.ProductName;
+    if (request.Bio is not null) user.Bio = request.Bio;
     if (request.CraftId is not null) user.CraftId = request.CraftId;
 
     if (request.CraftId is null
@@ -130,7 +131,7 @@ public class UserController : ControllerBase
       .Select(ut => ut.Tag!.TagName)
       .ToListAsync();
 
-    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.Prefecture, user.Latitude, user.Longitude, user.ProductName, user.CraftId, tags, user.CreateAt));
+    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.Prefecture, user.Latitude, user.Longitude, user.ProductName, user.Bio, user.CraftId, tags, user.CreateAt));
   }
 
   [Authorize]

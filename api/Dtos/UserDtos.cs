@@ -6,6 +6,7 @@ public record UserPublicDto(
   string? Avatar,
   bool JobOrCommonMan,
   string? ProductName,
+  string? Bio,
   string? Address,
   string? Prefecture,
   double? Latitude,
@@ -25,6 +26,7 @@ public record UserAccountDto(
   double? Latitude,
   double? Longitude,
   string? ProductName,
+  string? Bio,
   Guid? CraftId,
   List<string> Tags,
   DateTime CreateAt);
@@ -35,4 +37,5 @@ public record UserPatchRequestDto(
   string? Address,
   string? Prefecture,
   string? ProductName,
+  string? Bio,
   Guid? CraftId);

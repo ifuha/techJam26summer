@@ -47,7 +47,7 @@ public class CraftController : ControllerBase
 
     var successors = craft.Successors
       .Select(u => new UserPublicDto(
-        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
+        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Bio, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .ToList();
 

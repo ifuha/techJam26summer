@@ -17,20 +17,44 @@ public class PostController : ControllerBase
     _db = db;
   }
 
-  private static readonly Func<Model.Post, PostDto> ToDto = p => new PostDto(
-    p.PostId,
-    p.Title,
-    p.UserId,
-    p.ReportMassege,
-    p.Subscription,
-    p.CreateAt,
-    p.SupportId,
-    p.Likes.Count,
-    p.PostTags.Select(pt => pt.Tag!.TagName).ToList(),
-    p.Media
-      .OrderBy(m => m.SortOrder)
-      .Select(m => new PostMediaDto(m.PostMediaId, m.Url, m.Type.ToString(), m.SortOrder))
-      .ToList());
+  private async Task<HashSet<Guid>> GetUnlockedSupportIdsAsync(Guid? viewerId)
+  {
+    if (viewerId is null)
+    {
+      return new HashSet<Guid>();
+    }
+
+    var supportIds = await _db.Subscriptions
+      .Where(s => s.UserId == viewerId)
+      .Select(s => s.SupportId)
+      .ToListAsync();
+    return supportIds.ToHashSet();
+  }
+
+  private static PostDto ToDto(Model.Post p, Guid? viewerId, HashSet<Guid> unlockedSupportIds)
+  {
+    var isLocked = p.SupportId is not null
+      && p.UserId != viewerId
+      && !unlockedSupportIds.Contains(p.SupportId.Value);
+
+    return new PostDto(
+      p.PostId,
+      p.Title,
+      p.UserId,
+      isLocked ? null : p.ReportMassege,
+      p.Subscription,
+      p.CreateAt,
+      p.SupportId,
+      isLocked,
+      p.Likes.Count,
+      p.PostTags.Select(pt => pt.Tag!.TagName).ToList(),
+      isLocked
+        ? new List<PostMediaDto>()
+        : p.Media
+          .OrderBy(m => m.SortOrder)
+          .Select(m => new PostMediaDto(m.PostMediaId, m.Url, m.Type.ToString(), m.SortOrder))
+          .ToList());
+  }
 
   private static bool TryBuildMedia(
     List<PostMediaInputDto>? input,
@@ -68,13 +92,16 @@ public class PostController : ControllerBase
   [HttpGet("/api/Posts")]
   public async Task<ActionResult<List<PostDto>>> GetPosts()
   {
+    var viewerId = User.TryGetUserId();
+    var unlockedSupportIds = await GetUnlockedSupportIdsAsync(viewerId);
+
     var posts = await _db.Posts
       .Include(p => p.Likes)
       .Include(p => p.PostTags).ThenInclude(pt => pt.Tag)
       .Include(p => p.Media)
       .OrderByDescending(p => p.CreateAt)
       .ToListAsync();
-    return Ok(posts.Select(ToDto));
+    return Ok(posts.Select(p => ToDto(p, viewerId, unlockedSupportIds)));
   }
 
   [HttpGet("/api/Post/{id}")]
@@ -85,7 +112,14 @@ public class PostController : ControllerBase
       .Include(p => p.PostTags).ThenInclude(pt => pt.Tag)
       .Include(p => p.Media)
       .FirstOrDefaultAsync(p => p.PostId == id);
-    return post is null ? NotFound() : Ok(ToDto(post));
+    if (post is null)
+    {
+      return NotFound();
+    }
+
+    var viewerId = User.TryGetUserId();
+    var unlockedSupportIds = await GetUnlockedSupportIdsAsync(viewerId);
+    return Ok(ToDto(post, viewerId, unlockedSupportIds));
   }
 
   [Authorize]
@@ -94,10 +128,17 @@ public class PostController : ControllerBase
   {
     var userId = User.GetUserId();
 
-    var supportExists = await _db.Supports.AnyAsync(s => s.SupportId == request.SupportId);
-    if (!supportExists)
+    if (request.SupportId is not null)
     {
-      return BadRequest("指定されたSupportが存在しません。");
+      var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == request.SupportId);
+      if (support is null)
+      {
+        return BadRequest("指定されたSupportが存在しません。");
+      }
+      if (support.UserId != userId)
+      {
+        return Forbid();
+      }
     }
 
     if (!TryBuildMedia(request.Media, out var media, out var mediaError))
@@ -120,7 +161,7 @@ public class PostController : ControllerBase
     _db.Posts.Add(post);
     await _db.SaveChangesAsync();
 
-    return CreatedAtAction(nameof(GetPost), new { id = post.PostId }, ToDto(post));
+    return CreatedAtAction(nameof(GetPost), new { id = post.PostId }, ToDto(post, userId, new HashSet<Guid>()));
   }
 
   [Authorize]
@@ -143,6 +184,19 @@ public class PostController : ControllerBase
       return Forbid();
     }
 
+    if (request.SupportId is not null)
+    {
+      var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == request.SupportId);
+      if (support is null)
+      {
+        return BadRequest("指定されたSupportが存在しません。");
+      }
+      if (support.UserId != userId)
+      {
+        return Forbid();
+      }
+    }
+
     if (!TryBuildMedia(request.Media, out var media, out var mediaError))
     {
       return BadRequest(mediaError);
@@ -151,7 +205,7 @@ public class PostController : ControllerBase
     if (request.Title is not null) post.Title = request.Title;
     if (request.ReportMassege is not null) post.ReportMassege = request.ReportMassege;
     if (request.Subscription is not null) post.Subscription = request.Subscription;
-    if (request.SupportId is not null) post.SupportId = request.SupportId.Value;
+    if (request.SupportId is not null) post.SupportId = request.SupportId;
     if (request.Media is not null)
     {
       _db.PostMedia.RemoveRange(post.Media);
@@ -163,7 +217,7 @@ public class PostController : ControllerBase
     }
 
     await _db.SaveChangesAsync();
-    return Ok(ToDto(post));
+    return Ok(ToDto(post, userId, new HashSet<Guid>()));
   }
 
   [Authorize]

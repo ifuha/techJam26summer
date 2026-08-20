@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260820184308_AddSupportPlanAndUserBio")]
+    partial class AddSupportPlanAndUserBio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,7 +171,7 @@ namespace api.Migrations
                     b.Property<string>("Subscription")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("SupportId")
+                    b.Property<Guid>("SupportId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -424,7 +427,9 @@ namespace api.Migrations
                 {
                     b.HasOne("Api.Model.Support", "Support")
                         .WithMany("Post")
-                        .HasForeignKey("SupportId");
+                        .HasForeignKey("SupportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Api.Model.User", "User")
                         .WithMany("Posts")

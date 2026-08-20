@@ -15,7 +15,7 @@ const Search = () => {
   const [filterTag, setFilterTag] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col w-screen h-dvh">
+    <div className="flex flex-col w-screen h-dvh bg-[#FAF9F6]">
       <Header onFilterChange={setFilterTag} />
       <div className="relative flex-1 min-h-0">
         <Map
@@ -34,13 +34,7 @@ const Search = () => {
         )}
         {selectedCraft && (
           <div className="absolute w-full bottom-0">
-            <CraftCard
-              craft={selectedCraft}
-              onSelectUser={(user) => {
-                setSelectedCraft(null);
-                setSelectedUser(user);
-              }}
-            />
+            <CraftCard craft={selectedCraft} />
           </div>
         )}
       </div>

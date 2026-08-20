@@ -19,10 +19,13 @@ export type Post = {
   postId: string;
   title: string;
   userId: string;
-  reportMassege: string;
+  // null when the viewer hasn't unlocked this post (see isLocked)
+  reportMassege: string | null;
   subscription: string | null;
   createAt: string;
-  supportId: string;
+  // null means this post is public (not gated behind a support plan)
+  supportId: string | null;
+  isLocked: boolean;
   likeCount: number;
   tags: string[];
   media: PostMedia[];
@@ -33,7 +36,8 @@ export type PostCreateRequest = {
   title: string;
   reportMassege: string;
   subscription?: string | null;
-  supportId: string;
+  // omit or null to make the post public
+  supportId?: string | null;
   media?: PostMediaInput[] | null;
 };
 

@@ -13,6 +13,7 @@ public class User
   public double? Latitude { get;set; }
   public double? Longitude { get;set; }
   public string? ProductName { get;set; }
+  public string? Bio { get;set; }
   public Guid? CraftId { get;set; }
   public Craft? Craft { get;set; }
   public DateTime CreateAt { get;set; }

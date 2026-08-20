@@ -26,3 +26,9 @@ export const formatCount = (count: number): string => count.toLocaleString("ja-J
 
 export const truncateText = (text: string, maxLength = 20): string =>
   text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
+
+export const getPlanIcon = (planName: string): "leaf" | "star" | "pro" => {
+  if (planName.includes("プレミアム")) return "pro";
+  if (planName.includes("スタンダード")) return "star";
+  return "leaf";
+};
