@@ -10,7 +10,11 @@ public class User
   public bool JobOrCommonMan { get;set; }
   public string? Address { get;set; }
   public string? Prefecture { get;set; }
+  public double? Latitude { get;set; }
+  public double? Longitude { get;set; }
   public string? ProductName { get;set; }
+  public Guid? CraftId { get;set; }
+  public Craft? Craft { get;set; }
   public DateTime CreateAt { get;set; }
   public ICollection<Post> Posts { get;set; } = new List<Post>();
   public ICollection<Support> Supports { get;set; } = new List<Support>();
