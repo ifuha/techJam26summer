@@ -21,13 +21,16 @@ public class CraftController : ControllerBase
   }
 
   private static readonly Func<Model.Craft, CraftSummaryDto> ToSummaryDto = c => new CraftSummaryDto(
-    c.CraftId, c.ProductName, c.Address, c.Prefecture, c.Latitude, c.Longitude, c.Image);
+    c.CraftId, c.ProductName, c.Address, c.Prefecture, c.Latitude, c.Longitude, c.Image, 0);
 
   [HttpGet("/api/crafts")]
   public async Task<ActionResult<List<CraftSummaryDto>>> GetCrafts()
   {
-    var crafts = await _db.Crafts.ToListAsync();
-    return Ok(crafts.Select(ToSummaryDto));
+    var crafts = await _db.Crafts
+      .Select(c => new CraftSummaryDto(
+        c.CraftId, c.ProductName, c.Address, c.Prefecture, c.Latitude, c.Longitude, c.Image, c.Successors.Count))
+      .ToListAsync();
+    return Ok(crafts);
   }
 
   [HttpGet("/api/craft/{id}")]
@@ -50,7 +53,8 @@ public class CraftController : ControllerBase
 
     var dto = new CraftDetailDto(
       craft.CraftId, craft.ProductName, craft.Address, craft.Prefecture, craft.Latitude, craft.Longitude,
-      craft.Image, craft.Description, successors.Count, successors, craft.CreateAt);
+      craft.Image, craft.Description, craft.Reading, craft.Category, craft.Certification,
+      craft.Features, craft.ProductionAreas, successors.Count, successors, craft.CreateAt);
 
     return Ok(dto);
   }
@@ -72,6 +76,11 @@ public class CraftController : ControllerBase
       Prefecture = request.Prefecture,
       Image = request.Image,
       Description = request.Description,
+      Reading = request.Reading,
+      Category = request.Category,
+      Certification = request.Certification,
+      Features = request.Features ?? new List<string>(),
+      ProductionAreas = request.ProductionAreas ?? new List<string>(),
       CreateAt = DateTime.UtcNow,
     };
 
@@ -115,6 +124,11 @@ public class CraftController : ControllerBase
     if (request.Prefecture is not null) craft.Prefecture = request.Prefecture;
     if (request.Image is not null) craft.Image = request.Image;
     if (request.Description is not null) craft.Description = request.Description;
+    if (request.Reading is not null) craft.Reading = request.Reading;
+    if (request.Category is not null) craft.Category = request.Category;
+    if (request.Certification is not null) craft.Certification = request.Certification;
+    if (request.Features is not null) craft.Features = request.Features;
+    if (request.ProductionAreas is not null) craft.ProductionAreas = request.ProductionAreas;
 
     if (addressChanged || prefectureChanged)
     {

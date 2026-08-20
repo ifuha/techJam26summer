@@ -23,22 +23,14 @@ const Home = () => {
       <Header onFilterChange={setFilterTag} />
       <div className="relative flex-1 min-h-0">
         <Map
-          onPinClick={(user) => {
-            setSelectedCraft(null);
-            setSelectedUser(user);
+          onCraftClick={(craft) => {
+            setSelectedUser(null);
+            setSelectedCraft(craft);
           }}
           onCraftInView={setCraftInView}
           filterTag={filterTag}
         />
-        {craftInView && !selectedCraft && (
-          <CraftPreview
-            craft={craftInView}
-            onSelect={() => {
-              setSelectedUser(null);
-              setSelectedCraft(craftInView);
-            }}
-          />
-        )}
+        {craftInView && <CraftPreview craft={craftInView} />}
         {selectedUser && (
           <div className="absolute w-full bottom-0">
             <Card user={selectedUser} onSelectUser={setSelectedUser} />
@@ -46,7 +38,13 @@ const Home = () => {
         )}
         {selectedCraft && (
           <div className="absolute w-full bottom-0">
-            <CraftCard craft={selectedCraft} />
+            <CraftCard
+              craft={selectedCraft}
+              onSelectUser={(user) => {
+                setSelectedCraft(null);
+                setSelectedUser(user);
+              }}
+            />
           </div>
         )}
       </div>

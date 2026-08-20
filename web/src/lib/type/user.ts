@@ -9,6 +9,7 @@ export type UserPublic = {
   prefecture: string | null;
   latitude: number | null;
   longitude: number | null;
+  craftId: string | null;
   tags: string[];
   createAt: string;
 };

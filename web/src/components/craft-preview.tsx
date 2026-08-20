@@ -1,20 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import type { CraftSummary } from "@/lib/type";
 
 export type CraftPreviewProps = {
   craft: CraftSummary;
-  onSelect: () => void;
 };
 
-export function CraftPreview({ craft, onSelect }: CraftPreviewProps) {
+export function CraftPreview({ craft }: CraftPreviewProps) {
   const location = [craft.prefecture, craft.address].filter(Boolean).join(" ");
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <Link
       key={craft.craftId}
+      href={`/areaDetails?craftId=${craft.craftId}`}
       className="absolute top-4 left-4 flex items-center gap-3 bg-[#FAF9F6] rounded-sm shadow-lg p-3 text-left animate-card-content cursor-pointer"
     >
       <div className="min-w-0">
@@ -35,6 +34,6 @@ export function CraftPreview({ craft, onSelect }: CraftPreviewProps) {
           />
         )}
       </div>
-    </button>
+    </Link>
   );
 }

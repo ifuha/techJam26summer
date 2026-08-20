@@ -9,6 +9,7 @@ export type CraftSummary = {
   latitude: number | null;
   longitude: number | null;
   image: string | null;
+  successorCount: number;
 };
 
 // GET /api/craft/{id}
@@ -21,6 +22,11 @@ export type CraftDetail = {
   longitude: number | null;
   image: string | null;
   description: string | null;
+  reading: string | null;
+  category: string | null;
+  certification: string | null;
+  features: string[];
+  productionAreas: string[];
   successorCount: number;
   successors: UserPublic[];
   createAt: string;
