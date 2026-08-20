@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icon } from "./icons/icon";
+import { Head } from "./head";
 import { getTags } from "@/lib/api";
 import type { Tag } from "@/lib/type";
 
@@ -26,11 +26,7 @@ export function Header({ onFilterChange }: HeaderProps) {
 
   return (
     <div className="w-full bg-[#FAF9F6]">
-      <div className="flex items-center justify-between px-4 py-3">
-        <Icon name="menu" size={22} />
-        <div className="text-[20px] text-black">Logo</div>
-        <Icon name="bell" size={22} />
-      </div>
+      <Head />
       <div className="flex gap-2 overflow-x-auto px-4 pb-3">
         <button
           type="button"
