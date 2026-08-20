@@ -8,7 +8,7 @@ export function Head() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="w-full bg-[#FAF9F6] flex items-center justify-between px-4 py-3">
+    <div className="w-full bg-[#FAF9F6] text-black flex items-center justify-between px-4 py-3">
       <button
         type="button"
         onClick={() => setSidebarOpen(true)}

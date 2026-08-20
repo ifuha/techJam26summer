@@ -18,11 +18,6 @@ type MenuItem = {
   label: string;
   icon: IconProps["name"];
   href: string;
-  // Only pages that are actually implemented should ever highlight as
-  // active. The rest currently fall back to "/" as a placeholder
-  // destination, so they must be excluded from active-path matching —
-  // otherwise every placeholder item would light up together whenever
-  // pathname === "/".
   matchPath?: string;
 };
 
@@ -85,7 +80,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="px-4 pb-4">
           <button
             type="button"
-            className="w-full py-2 rounded-full border border-black text-[13px] text-[#000000]"
+            className="w-full py-2 rounded-full border border-black text-[13px] text-[#000000] cursor-pointer"
           >
             プロフィールを編集
           </button>

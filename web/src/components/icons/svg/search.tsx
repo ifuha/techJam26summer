@@ -5,14 +5,14 @@ export function Search() {
         cx="11"
         cy="11"
         r="7"
-        stroke="black"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M21 21L16.65 16.65"
-        stroke="black"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
