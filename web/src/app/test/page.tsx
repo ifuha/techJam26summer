@@ -1,8 +1,8 @@
-import { Card } from "@/components/card_components"
+import { LightPlan } from "@/components/lightPlan_components"
 
 function App(){
     return(
-        <Card></Card>
+        <LightPlan></LightPlan>
     )
 }
 
