@@ -28,11 +28,11 @@ type MenuItem = {
 
 const MENU_ITEMS: MenuItem[] = [
   { label: "ホーム", icon: "home", href: "/", matchPath: "/" },
-  { label: "探す", icon: "search", href: "/" },
-  { label: "応援中", icon: "heart", href: "/" },
-  { label: "お気に入り", icon: "bookmark", href: "/" },
-  { label: "設定", icon: "settings", href: "/" },
-  { label: "ヘルプ", icon: "help", href: "/" },
+  { label: "探す", icon: "search", href: "/search" },
+  { label: "応援中", icon: "heart", href: "/heart" },
+  { label: "お気に入り", icon: "bookmark", href: "/bookmark" },
+  { label: "設定", icon: "settings", href: "/settings" },
+  { label: "ヘルプ", icon: "help", href: "/help" },
 ];
 
 export function Sidebar({ open, onClose }: SidebarProps) {
@@ -82,7 +82,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </div>
           </div>
         </div>
-
         <div className="px-4 pb-4">
           <button
             type="button"
@@ -94,8 +93,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="border-t" />
         <nav className="px-2 py-2 cursor-pointer">
           {MENU_ITEMS.map((item) => {
-            const active =
-              item.matchPath !== undefined && pathname === item.matchPath;
+            const active = item.href !== undefined && pathname === item.href;
             return (
               <Link
                 key={item.label}
@@ -113,7 +111,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </Link>
             );
           })}
-
           <button
             type="button"
             onClick={handleLogout}
