@@ -1,9 +1,9 @@
-import { Card } from "@/components/card_components"
+import { Header } from "@/components/header";
 
-function App(){
-    return(
-        <Card></Card>
-    )
+export default function TestPage() {
+  return (
+    <div className="w-screen h-dvh">
+      <Header />
+    </div>
+  );
 }
-
-export default App

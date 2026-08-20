@@ -31,6 +31,8 @@
 
 `Prefecture`は地図にピンを立てるための都道府県(47都道府県のいずれかにバリデーション、`Helpers/Prefectures.cs`)。`Address`は市区町村以降の自由記述で、地図表示には使わない想定。register/patch時に不正な値は400になる。
 
+`CraftId`はそのユーザーが後継者として名乗っている`Craft`(伝統工芸)への紐付け。Job系ユーザーのみ`PATCH /api/User/Patch`で設定可能(詳細は下記Craftセクション)。
+
 ## Post (`PostController`)
 
 | Method | Path | 認証 | 説明 |
@@ -101,6 +103,31 @@ api.md原案のルートは他エンドポイントと衝突する形だった�
 | GET | `/api/userTag/{userId}` | 不要 | そのユーザーに付いているTag一覧 |
 | POST | `/api/userTag` | 必須 | 自分にTagを付与(ボディに`tagId`)。一般ユーザーは400 |
 | DELETE | `/api/userTag/{tagId}` | 必須 | 自分からTagを外す |
+
+## Admin (`AdminController`)
+
+`User`とは別テーブルの管理者アカウント。`Craft`のCRUDに必要な権限(`AdminOnly`ポリシー、JWTに`role: Admin`クレーム)を持つ。
+
+| Method | Path | 認証 | 説明 |
+|---|---|---|---|
+| POST | `/api/admin/register` | 不要 | 管理者登録。メール重複時は409。成功時JWT(role=Admin)を返す |
+| POST | `/api/admin/login` | 不要 | 管理者ログイン |
+
+## Craft (`CraftController`)
+
+「地域の伝統工芸」を表すテーブル。地図をズームした際にピンの代わりに出すカード用データで、`ProductName`/`Address`/`Prefecture`/`Image`/`Description`を持つ。作成・編集時に`Prefecture`+`Address`から自動ジオコーディング(`GeocodingService`、Userと同じ仕組み)。作成・編集・削除は`AdminOnly`、閲覧は誰でも可能。
+
+| Method | Path | 認証 | 説明 |
+|---|---|---|---|
+| GET | `/api/crafts` | 不要 | Craft一覧(地図表示用の要約: ProductName/Address/Prefecture/Lat/Lng/Image) |
+| GET | `/api/craft/{id}` | 不要 | Craft詳細(Descriptionと、紐付いている後継者一覧`successors`・`successorCount`を含む) |
+| POST | `/api/craft` | Admin | Craft作成 |
+| PATCH | `/api/craft/Patch/{id}` | Admin | Craft編集 |
+| DELETE | `/api/craft/Delete/{id}` | Admin | Craft削除(紐付くUserは`CraftId`がnullになるだけ、Userは削除されない) |
+
+**後継者(successor)の登録**: CraftControllerではなく`User`側で行う。Job系ユーザー(`JobOrCommonMan == true`)が`PATCH /api/User/Patch`で`craftId`を指定すると、そのCraftの後継者として登録される(一般ユーザーは400)。指定したCraftが存在しない場合も400。
+
+**自動リンク**: ユーザーは`craftId`を意識する必要はない。`register`時、および`craftId`を明示指定しない`PATCH /api/User/Patch`時に、`ProductName`と`Prefecture`が完全一致する`Craft`があれば自動で`CraftId`をセットする(`AuthController.Register`/`UserController.PatchUser`)。表記ゆれ(例:「美濃焼」と「美濃焼き」)は別物として扱われ、自動リンクされない。
 
 ## Follow (`FollowController`)
 

@@ -5,7 +5,10 @@ export type UserPublic = {
   avatar: string | null;
   jobOrCommonMan: boolean;
   productName: string | null;
+  address: string | null;
   prefecture: string | null;
+  latitude: number | null;
+  longitude: number | null;
   tags: string[];
   createAt: string;
 };
@@ -19,6 +22,8 @@ export type UserAccount = {
   jobOrCommonMan: boolean;
   address: string | null;
   prefecture: string | null;
+  latitude: number | null;
+  longitude: number | null;
   productName: string | null;
   tags: string[];
   createAt: string;
