@@ -62,7 +62,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     >
       <div
         onClick={onClose}
-        className={`absolute inset-0 bg-black/30 transition-opacity duration-200 ${
+        className={`absolute inset-0 bg-black/80 transition-opacity duration-200 ${
           open ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -92,7 +92,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </button>
         </div>
         <div className="border-t" />
-        <nav className="px-2 py-2">
+        <nav className="px-2 py-2 cursor-pointer">
           {MENU_ITEMS.map((item) => {
             const active =
               item.matchPath !== undefined && pathname === item.matchPath;
@@ -117,7 +117,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <button
             type="button"
             onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-3 py-3 rounded-lg text-[15px] text-[#000000] text-left"
+            className="w-full flex items-center gap-4 px-3 py-3 rounded-lg text-[15px] text-[#000000] text-left cursor-pointer"
           >
             <Icon name="logout" size={20} />
             ログアウト
