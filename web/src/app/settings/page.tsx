@@ -37,6 +37,7 @@ const Settings = () => {
   const router = useRouter();
   const [account, setAccount] = useState<UserAccount | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const userId = getUserId();
@@ -59,12 +60,16 @@ const Settings = () => {
     if (!confirmed) return;
 
     setDeleting(true);
+    setError(null);
     deleteUser()
       .then(() => {
         removeToken();
         router.push("/");
       })
-      .catch((error) => console.error("Failed to delete account:", error))
+      .catch((err) => {
+        console.error("Failed to delete account:", err);
+        setError(err.message ?? "削除に失敗しました");
+      })
       .finally(() => setDeleting(false));
   };
 
@@ -93,6 +98,7 @@ const Settings = () => {
           <SettingsRow label="ログアウト" onClick={handleLogout} />
           <SettingsRow label="アカウント削除" danger onClick={handleDelete} />
         </div>
+        {error && <p className="mt-2.75 text-[13px] text-red-500">{error}</p>}
         {account && (
           <div className="mt-4.25 text-[11px] text-gray-400">
             {account.email}

@@ -27,5 +27,6 @@ public record CreatorSupporterDto(
   string? SupporterAvatar,
   Guid SupportId,
   string SupportName,
+  int Amount,
   DateTime CreateAt,
   bool IsThanked);

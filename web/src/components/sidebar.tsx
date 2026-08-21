@@ -23,7 +23,7 @@ type MenuItem = {
 
 const COMMON_MENU_ITEMS: MenuItem[] = [
   { label: "ホーム", icon: "home", href: "/", matchPath: "/" },
-  { label: "探す", icon: "search", href: "/search" },
+  { label: "探す", icon: "search", href: "/search", matchPath: "/search" },
   { label: "応援中", icon: "heart", href: "/heart", matchPath: "/heart" },
   {
     label: "お気に入り",
@@ -31,7 +31,7 @@ const COMMON_MENU_ITEMS: MenuItem[] = [
     href: "/bookmark",
     matchPath: "/bookmark",
   },
-  { label: "設定", icon: "settings", href: "/settings" },
+  { label: "設定", icon: "settings", href: "/settings", matchPath: "/settings" },
   { label: "ヘルプ", icon: "help", href: "/" },
 ];
 
@@ -51,8 +51,8 @@ const JOB_MENU_ITEMS: MenuItem[] = [
     href: "/account/supporter",
     matchPath: "/account/supporter",
   },
-  { label: "売り上げ", icon: "chart", href: "/account" },
-  { label: "設定", icon: "settings", href: "/settings" },
+  { label: "売り上げ", icon: "chart", href: "/account/sales", matchPath: "/account/sales" },
+  { label: "設定", icon: "settings", href: "/settings", matchPath: "/settings" },
   { label: "ヘルプ", icon: "help", href: "/" },
 ];
 
@@ -138,7 +138,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <div className="border-t border-[#EEEEEE]" />
         <nav className="px-2 py-2 cursor-pointer">
           {menuItems.map((item) => {
-            const active = item.href !== undefined && pathname === item.href;
+            const active = item.matchPath !== undefined && pathname === item.matchPath;
             return (
               <Link
                 key={item.label}

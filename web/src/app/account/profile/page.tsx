@@ -19,6 +19,7 @@ const ProfileEdit = () => {
   const [bio, setBio] = useState("");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const userId = getUserId();
@@ -50,6 +51,7 @@ const ProfileEdit = () => {
 
   const handleSave = () => {
     setSaving(true);
+    setError(null);
     patchUser({
       name,
       avatar,
@@ -59,7 +61,10 @@ const ProfileEdit = () => {
       bio: bio || null,
     })
       .then(() => router.back())
-      .catch((error) => console.error("Failed to save profile:", error))
+      .catch((err) => {
+        console.error("Failed to save profile:", err);
+        setError(err.message ?? "保存に失敗しました");
+      })
       .finally(() => setSaving(false));
   };
 
@@ -162,6 +167,8 @@ const ProfileEdit = () => {
             />
           </div>
         </div>
+
+        {error && <p className="mt-2.75 text-[13px] text-red-500">{error}</p>}
 
         <button
           type="button"

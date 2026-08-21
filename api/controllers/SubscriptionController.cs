@@ -97,6 +97,7 @@ public class SubscriptionController : ControllerBase
         s.User!.Avatar,
         s.SupportId,
         s.Support!.Name,
+        s.Support!.Amount,
         s.CreateAt,
         _db.Thanks.Any(t => t.SubscriptionId == s.SubscriptionId)))
       .ToListAsync();

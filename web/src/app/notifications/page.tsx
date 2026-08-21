@@ -75,13 +75,13 @@ const Notifications = () => {
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
       <div className="px-4">
-        <div className="flex items-center gap-2 pt-2.75 pb-8">
+        <div className="flex justify-center gap-2 pt-2.75 pb-8">
           <button
             type="button"
             onClick={() => router.back()}
-            className="cursor-pointer text-black rotate-180"
+            className="cursor-pointer text-black flex items-center rotate-180"
           >
-            <Icon name="chevron-right" size={14} />
+            <Icon name="chevron-right" size={16} />
           </button>
           <div className="flex-1 text-center text-[17px] font-bold text-[#000000] -ml-5">
             お知らせ

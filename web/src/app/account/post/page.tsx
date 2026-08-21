@@ -33,6 +33,7 @@ const CreatePost = () => {
   const [supportId, setSupportId] = useState<string | null>(null);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const mediaPreviews = useMemo(
     () => mediaFiles.map((file) => URL.createObjectURL(file)),
@@ -94,6 +95,7 @@ const CreatePost = () => {
 
   const handleSubmit = () => {
     setSubmitting(true);
+    setError(null);
 
     const uploadMedia = (): Promise<PostMediaInput[] | undefined> => {
       if (mediaFiles.length === 0) return Promise.resolve(undefined);
@@ -127,7 +129,10 @@ const CreatePost = () => {
         return post;
       })
       .then(() => router.push("/account"))
-      .catch((error) => console.error("Failed to create post:", error))
+      .catch((err) => {
+        console.error("Failed to create post:", err);
+        setError(err.message ?? "投稿に失敗しました");
+      })
       .finally(() => setSubmitting(false));
   };
 
@@ -343,6 +348,8 @@ const CreatePost = () => {
                 {visibilityLabel}
               </div>
             </div>
+
+            {error && <p className="text-[13px] text-red-500">{error}</p>}
 
             <button
               type="button"

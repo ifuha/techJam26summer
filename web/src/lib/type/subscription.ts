@@ -40,6 +40,7 @@ export type CreatorSupporter = {
   supporterAvatar: string | null;
   supportId: string;
   supportName: string;
+  amount: number;
   createAt: string;
   isThanked: boolean;
 };

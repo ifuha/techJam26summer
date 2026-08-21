@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { Support, UserPublic } from "@/lib/type";
 import { getSupportStatus, getUser, subscribe } from "@/lib/api";
@@ -19,6 +18,7 @@ function CheckoutContent() {
   const [support, setSupport] = useState<Support | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -37,16 +37,19 @@ function CheckoutContent() {
   const handlePay = () => {
     if (!supportId || submitting) return;
     setSubmitting(true);
+    setError(null);
     subscribe({ supportId })
       .then(() => setDone(true))
-      .catch((error) => console.error("Failed to subscribe:", error))
+      .catch((err) => {
+        console.error("Failed to subscribe:", err);
+        setError(err.message ?? "決済に失敗しました");
+      })
       .finally(() => setSubmitting(false));
   };
 
   if (done) {
     return (
       <div className="w-screen min-h-dvh bg-[#FAF9F6]">
-        <Head />
         <div className="px-4 pt-16 flex flex-col items-center text-center">
           <div className="w-16 h-16 rounded-full bg-[#5E7231] flex items-center justify-center text-white text-[28px]">
             ✓
@@ -71,18 +74,16 @@ function CheckoutContent() {
 
   return (
     <div className="w-screen min-h-dvh bg-white">
-      <Head />
-
       <div className="px-4 pt-2.75 pb-10">
         <button
           type="button"
           onClick={() => router.back()}
           className="flex items-center gap-1 text-[15px] font-bold text-[#000000] cursor-pointer"
         >
-          <span className="text-black rotate-180">
+          <span className="inline-flex items-center text-black rotate-180">
             <Icon name="chevron-right" size={10} />
           </span>
-          お支払い
+          <span>お支払い</span>
         </button>
 
         <div className="mt-3.25 rounded-lg border p-3.25 flex items-center gap-3">
@@ -153,6 +154,10 @@ function CheckoutContent() {
         <div className="mt-3.25 text-[11px] text-gray-400 leading-relaxed">
           これはテスト環境です。実際の決済は行われず、カード情報も送信されません。「決済を完了する」を押すと応援登録のみ行われます。
         </div>
+
+        {error && (
+          <p className="mt-2.75 text-[13px] text-red-500">{error}</p>
+        )}
 
         <button
           type="button"
