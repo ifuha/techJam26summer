@@ -63,8 +63,15 @@ public class AuthController : ControllerBase
 
     if (user.JobOrCommonMan && !string.IsNullOrWhiteSpace(user.ProductName) && user.Prefecture is not null)
     {
-      var matchedCraft = await _db.Crafts.FirstOrDefaultAsync(c =>
-        c.ProductName == user.ProductName && c.Prefecture == user.Prefecture);
+      var candidates = await _db.Crafts
+        .Where(c => c.ProductName == user.ProductName && c.Prefecture == user.Prefecture)
+        .ToListAsync();
+      // Prefer a craft whose ProductionAreas explicitly includes the user's city
+      // (e.g. 美濃焼 in 岐阜県 covers 多治見市/土岐市/瑞浪市, not 高山市). Crafts
+      // without ProductionAreas data yet fall back to prefecture-only matching.
+      var matchedCraft = candidates.FirstOrDefault(c =>
+        c.ProductionAreas.Count > 0 && user.Address is not null && c.ProductionAreas.Contains(user.Address))
+        ?? candidates.FirstOrDefault(c => c.ProductionAreas.Count == 0);
       if (matchedCraft is not null)
       {
         user.CraftId = matchedCraft.CraftId;

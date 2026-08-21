@@ -28,7 +28,9 @@ function SuccessorRow({ user }: { user: UserPublic }) {
           </div>
         )}
       </div>
-      <Icon name="chevron-right" size={12} />
+      <div className="text-black">
+        <Icon name="chevron-right" size={12} />
+      </div>
     </Link>
   );
 }
@@ -63,9 +65,9 @@ export function CraftCard({ craft }: CraftCardProps) {
       }
     >
       <div key={craft.craftId} className="animate-card-content">
-        <p className="mt-3.25 text-[13px] text-[#000000]">
+        <div className="mt-3.25 text-[13px] text-[#000000]">
           この地域には後継者が{detail ? detail.successorCount : "-"}人います
-        </p>
+        </div>
 
         {detail?.successors.map((successor) => (
           <SuccessorRow key={successor.userId} user={successor} />

@@ -102,8 +102,12 @@ public class UserController : ControllerBase
       && !string.IsNullOrWhiteSpace(user.ProductName)
       && user.Prefecture is not null)
     {
-      var matchedCraft = await _db.Crafts.FirstOrDefaultAsync(c =>
-        c.ProductName == user.ProductName && c.Prefecture == user.Prefecture);
+      var candidates = await _db.Crafts
+        .Where(c => c.ProductName == user.ProductName && c.Prefecture == user.Prefecture)
+        .ToListAsync();
+      var matchedCraft = candidates.FirstOrDefault(c =>
+        c.ProductionAreas.Count > 0 && user.Address is not null && c.ProductionAreas.Contains(user.Address))
+        ?? candidates.FirstOrDefault(c => c.ProductionAreas.Count == 0);
       if (matchedCraft is not null)
       {
         user.CraftId = matchedCraft.CraftId;

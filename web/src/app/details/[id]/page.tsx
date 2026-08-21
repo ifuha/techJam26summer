@@ -123,15 +123,14 @@ const Detail = () => {
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
       <Head />
-
-      {publicMedia.length > 0 ? (
-        <>
+      <div className="relative">
+        {publicMedia.length > 0 ? (
           <div
             onScroll={(event) => {
               const el = event.currentTarget;
               setActiveMediaIndex(Math.round(el.scrollLeft / el.clientWidth));
             }}
-            className="w-full h-45 flex gap-0.5 overflow-x-auto snap-x snap-mandatory"
+            className="w-full aspect-5/2 flex gap-0.5 overflow-x-auto snap-x snap-mandatory scrollbar-none"
           >
             {publicMedia.map((media) => (
               <div
@@ -156,36 +155,20 @@ const Detail = () => {
               </div>
             ))}
           </div>
-          {publicMedia.length > 1 && (
-            <div className="flex justify-center gap-1.5 py-2.75">
-              {publicMedia.map((media, index) => (
-                <span
-                  key={media.postMediaId}
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{
-                    background:
-                      index === activeMediaIndex ? "#A8B28F" : "#A9A9A9",
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="w-full h-45 bg-gray-200 overflow-hidden">
-          {user.avatar && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-full h-full object-cover"
-            />
-          )}
-        </div>
-      )}
+        ) : (
+          <div className="w-full aspect-5/2 bg-gray-200 overflow-hidden">
+            {user.avatar && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+        )}
 
-      <div className="flex justify-end px-4 pt-2.75">
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border text-[12px] text-[#000000]">
+        <div className="absolute bottom-2.75 right-4 flex items-center bg-white gap-1.5 px-3 py-1 rounded-full shadow-xl text-[12px] text-[#000000]">
           <div className="text-[#F43939] pt-1">
             <Icon name="heart" size={16} />
           </div>
@@ -194,6 +177,20 @@ const Detail = () => {
           </div>
         </div>
       </div>
+
+      {publicMedia.length > 1 && (
+        <div className="flex justify-center gap-1.5 py-2.75">
+          {publicMedia.map((media, index) => (
+            <span
+              key={media.postMediaId}
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: index === activeMediaIndex ? "#A8B28F" : "#A9A9A9",
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="px-4 pt-2.75">
         {user.tags[0] && (
@@ -297,7 +294,7 @@ const Detail = () => {
                     type="button"
                     onClick={() => setSelectedSupportId(support.supportId)}
                     className={`rounded-lg border p-3.25 text-left ${
-                      selected ? "border-[#5E7231] border-2" : "border-2"
+                      selected ? "border-[#A6B28B] border-2" : "border-2"
                     }`}
                   >
                     <div className="flex items-center justify-between">
