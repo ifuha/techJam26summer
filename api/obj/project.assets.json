@@ -8830,6 +8830,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "AWSSDK.S3 >= 3.7.400",
       "BCrypt.Net-Next >= 4.1.0",
       "DotNetEnv >= 3.2.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 9.0.0",
@@ -8884,6 +8885,10 @@
       "net9.0": {
         "targetAlias": "net9.0",
         "dependencies": {
+          "AWSSDK.S3": {
+            "target": "Package",
+            "version": "[3.7.400, )"
+          },
           "BCrypt.Net-Next": {
             "target": "Package",
             "version": "[4.1.0, )"
