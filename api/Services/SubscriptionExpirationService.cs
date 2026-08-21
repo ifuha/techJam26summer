@@ -21,7 +21,17 @@ public class SubscriptionExpirationService : BackgroundService
     using var timer = new PeriodicTimer(CheckInterval);
     do
     {
-      await ExpireSubscriptionsAsync(stoppingToken);
+      try
+      {
+        await ExpireSubscriptionsAsync(stoppingToken);
+      }
+      catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
+      {
+        // A DB hiccup here shouldn't take the whole API down; log and retry
+        // on the next tick instead of letting the exception bubble up and
+        // stop the host (the default BackgroundServiceExceptionBehavior).
+        _logger.LogError(ex, "Failed to expire subscriptions; will retry next interval.");
+      }
     } while (await timer.WaitForNextTickAsync(stoppingToken));
   }
 
