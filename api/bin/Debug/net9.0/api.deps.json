@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v9.0": {
       "api/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.400",
           "BCrypt.Net-Next": "4.1.0",
           "DotNetEnv": "3.2.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "9.0.0",
