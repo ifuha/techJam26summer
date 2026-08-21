@@ -24,4 +24,5 @@ public class User
   public ICollection<Follow> Followeds { get;set; } = new List<Follow>();
   public ICollection<Tag> Tags { get;set; } = new List<Tag>();
   public ICollection<UserTag> ProfileTags { get;set; } = new List<UserTag>();
+  public ICollection<CraftFavorite> CraftFavorites { get;set; } = new List<CraftFavorite>();
 }

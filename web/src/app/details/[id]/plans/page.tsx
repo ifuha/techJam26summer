@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { Support, UserPublic } from "@/lib/type";
@@ -9,6 +9,7 @@ import { getSupportsByCreator, getUser, subscribe } from "@/lib/api";
 import { formatCount, getPlanIcon } from "@/lib/utils/format";
 
 const Plans = () => {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
   const userId = params.id;
   const [user, setUser] = useState<UserPublic | null>(null);
@@ -40,6 +41,7 @@ const Plans = () => {
     if (!selectedSupportId) return;
     setSubscribing(true);
     subscribe({ supportId: selectedSupportId })
+      .then(() => router.push("/heart"))
       .catch((error) => console.error("Failed to subscribe:", error))
       .finally(() => setSubscribing(false));
   };
@@ -80,12 +82,14 @@ const Plans = () => {
                       </div>
                     </div>
                     <div
-                      className={`w-4 h-4 rounded-full border-2 shrink-0 ${
-                        selected
-                          ? "border-[#5E7231] bg-[#5E7231]"
-                          : "border-gray-300"
+                      className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center ${
+                        selected ? "border-[#5E7231]" : "border-gray-300"
                       }`}
-                    />
+                    >
+                      {selected && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#5E7231]" />
+                      )}
+                    </div>
                   </div>
                   {support.benefits.length > 0 && (
                     <ul className="mt-1.5">

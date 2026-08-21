@@ -26,6 +26,20 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+button:not(:disabled),
+a,
+[role="button"],
+label[for],
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 @keyframes card-content-fade-in {
   from {
     opacity: 0;

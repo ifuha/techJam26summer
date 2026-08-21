@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     : base(options) { }
   public DbSet<Admin> Admins => Set<Admin>();
   public DbSet<Craft> Crafts => Set<Craft>();
+  public DbSet<CraftFavorite> CraftFavorites => Set<CraftFavorite>();
   public DbSet<Follow> Follows => Set<Follow>();
   public DbSet<Like> Likes => Set<Like>();
   public DbSet<Post> Posts => Set<Post>();
@@ -38,6 +39,22 @@ public class AppDbContext : DbContext
       .OnDelete(DeleteBehavior.Restrict);
 
     modelBuilder.Entity<Follow>().HasIndex(f => new { f.FollowerId, f.FollowedId }).IsUnique();
+
+    modelBuilder
+      .Entity<CraftFavorite>()
+      .HasOne(cf => cf.User)
+      .WithMany(u => u.CraftFavorites)
+      .HasForeignKey(cf => cf.UserId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder
+      .Entity<CraftFavorite>()
+      .HasOne(cf => cf.Craft)
+      .WithMany(c => c.Favorites)
+      .HasForeignKey(cf => cf.CraftId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<CraftFavorite>().HasIndex(cf => new { cf.UserId, cf.CraftId }).IsUnique();
 
     modelBuilder
       .Entity<User>()

@@ -24,8 +24,8 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { label: "ホーム", icon: "home", href: "/", matchPath: "/" },
   { label: "探す", icon: "search", href: "/search" },
-  { label: "応援中", icon: "heart", href: "/heart" },
-  { label: "お気に入り", icon: "bookmark", href: "/bookmark" },
+  { label: "応援中", icon: "heart", href: "/heart", matchPath: "/heart" },
+  { label: "お気に入り", icon: "bookmark", href: "/bookmark", matchPath: "/bookmark" },
   { label: "設定", icon: "settings", href: "/settings" },
   { label: "ヘルプ", icon: "help", href: "/help" },
 ];

@@ -52,6 +52,34 @@ public class SubscriptionController : ControllerBase
   }
 
   [Authorize]
+  [HttpGet("/api/SubScription/mine")]
+  public async Task<ActionResult<List<MySubscriptionDto>>> GetMySubscriptions()
+  {
+    var userId = User.GetUserId();
+
+    var subscriptions = await _db.Subscriptions
+      .Where(s => s.UserId == userId)
+      .Include(s => s.Support!).ThenInclude(sp => sp.User)
+      .OrderByDescending(s => s.CreateAt)
+      .Select(s => new MySubscriptionDto(
+        s.SubscriptionId,
+        s.SupportId,
+        s.Support!.Name,
+        s.Support!.Amount,
+        s.Support!.IsMonthly,
+        s.Support!.UserId,
+        s.Support!.User!.Name,
+        s.Support!.User!.Avatar,
+        s.Support!.User!.ProductName,
+        s.Support!.User!.Prefecture,
+        s.Support!.User!.Address,
+        s.CreateAt))
+      .ToListAsync();
+
+    return Ok(subscriptions);
+  }
+
+  [Authorize]
   [HttpDelete("/api/SubScription/{id}")]
   public async Task<IActionResult> Unsubscribe(Guid id)
   {

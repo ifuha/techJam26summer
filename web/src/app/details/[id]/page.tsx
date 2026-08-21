@@ -7,11 +7,14 @@ import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { Post, Support, UserPublic } from "@/lib/type";
 import {
+  follow,
   getFollowerCount,
+  getFollowStatus,
   getPosts,
   getSupportsByCreator,
   getUser,
   subscribe,
+  unfollow,
 } from "@/lib/api";
 import {
   formatCategoryLocation,
@@ -52,6 +55,8 @@ const Detail = () => {
   );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [subscribing, setSubscribing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -81,6 +86,10 @@ const Detail = () => {
         setSelectedSupportId(result[0]?.supportId ?? null);
       })
       .catch((error) => console.error("Failed to load supports:", error));
+
+    getFollowStatus(userId)
+      .then((result) => setIsFollowing(result.isFollowing))
+      .catch((error) => console.error("Failed to load follow status:", error));
   }, [userId]);
 
   const handleSubscribe = () => {
@@ -89,6 +98,16 @@ const Detail = () => {
     subscribe({ supportId: selectedSupportId })
       .catch((error) => console.error("Failed to subscribe:", error))
       .finally(() => setSubscribing(false));
+  };
+
+  const handleToggleFollow = () => {
+    if (!userId) return;
+    setFollowBusy(true);
+    const action = isFollowing ? unfollow(userId) : follow(userId);
+    action
+      .then(() => setIsFollowing((prev) => !prev))
+      .catch((error) => console.error("Failed to toggle follow:", error))
+      .finally(() => setFollowBusy(false));
   };
 
   if (!user) {
@@ -122,7 +141,10 @@ const Detail = () => {
 
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
-      <Head />
+      <div className="fixed z-51 top-0 w-full">
+        <Head />
+      </div>
+      <span className="h-13.5 block" />
       <div className="relative">
         {publicMedia.length > 0 ? (
           <div
@@ -193,11 +215,21 @@ const Detail = () => {
       )}
 
       <div className="px-4 pt-2.75">
-        {user.tags[0] && (
-          <div className="w-fit px-2 py-0.5 rounded-2xl border text-[10px] text-[#000000]">
-            {user.tags[0]}
-          </div>
-        )}
+        <div className="flex items-center justify-between">
+          {user.tags[0] && (
+            <div className="w-fit px-2 py-0.5 rounded-2xl border text-[10px] text-[#000000]">
+              {user.tags[0]}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleToggleFollow}
+            disabled={followBusy}
+            className={`ml-auto cursor-pointer disabled:opacity-50 ${isFollowing ? "text-[#F43939]" : "text-[#000000]"}`}
+          >
+            <Icon name="bookmark" size={22} />
+          </button>
+        </div>
         <div className="mt-1.5 text-[24px] font-bold text-[#000000]">
           {user.name}
         </div>
@@ -244,7 +276,7 @@ const Detail = () => {
               直近の活動記録
             </div>
             <div className="mt-2 flex gap-2">
-              {posts.slice(0, 3).map((post) => (
+              {posts.map((post) => (
                 <div
                   key={post.postId}
                   className="relative flex-1 aspect-square rounded-sm bg-gray-800 overflow-hidden"
@@ -293,7 +325,7 @@ const Detail = () => {
                     key={support.supportId}
                     type="button"
                     onClick={() => setSelectedSupportId(support.supportId)}
-                    className={`rounded-lg border p-3.25 text-left ${
+                    className={`rounded-lg border p-3.25 text-left cursor-pointer ${
                       selected ? "border-[#A6B28B] border-2" : "border-2"
                     }`}
                   >
@@ -308,12 +340,14 @@ const Detail = () => {
                         </div>
                       </div>
                       <div
-                        className={`w-4 h-4 rounded-full border-2 shrink-0 ${
-                          selected
-                            ? "border-[#5E7231] bg-[#5E7231]"
-                            : "border-gray-300"
+                        className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center ${
+                          selected ? "border-[#5E7231]" : "border-gray-300"
                         }`}
-                      />
+                      >
+                        {selected && (
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#5E7231]" />
+                        )}
+                      </div>
                     </div>
                     {support.benefits.length > 0 && (
                       <ul className="mt-1.5">

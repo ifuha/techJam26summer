@@ -69,6 +69,30 @@ public class FollowController : ControllerBase
     return NoContent();
   }
 
+  [Authorize]
+  [HttpGet("/api/follow/mine")]
+  public async Task<ActionResult<List<MyFollowDto>>> GetMyFollows()
+  {
+    var userId = User.GetUserId();
+
+    var follows = await _db.Follows
+      .Where(f => f.FollowerId == userId)
+      .Include(f => f.Followed)
+      .OrderByDescending(f => f.CreateAt)
+      .Select(f => new MyFollowDto(
+        f.FollowId,
+        f.FollowedId,
+        f.Followed!.Name,
+        f.Followed!.Avatar,
+        f.Followed!.ProductName,
+        f.Followed!.Prefecture,
+        f.Followed!.Address,
+        f.CreateAt))
+      .ToListAsync();
+
+    return Ok(follows);
+  }
+
   [HttpGet("/api/follow/{userId}/followers")]
   public async Task<ActionResult<FollowerCountDto>> GetFollowerCount(Guid userId)
   {

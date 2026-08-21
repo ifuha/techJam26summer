@@ -9,3 +9,19 @@ export type SubscriptionStatus = {
   status: boolean | null;
   expiresAt: string | null;
 };
+
+// GET /api/SubScription/mine
+export type MySubscription = {
+  subscriptionId: string;
+  supportId: string;
+  supportName: string;
+  amount: number;
+  isMonthly: boolean;
+  creatorUserId: string;
+  creatorName: string;
+  creatorAvatar: string | null;
+  creatorProductName: string | null;
+  creatorPrefecture: string | null;
+  creatorAddress: string | null;
+  createAt: string;
+};
