@@ -2,28 +2,176 @@
 @plugin "daisyui";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --header-height: 76px;
+  --category-height: 42px;
+  --ink: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
+  margin: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+  background: #fff;
+  font-family: Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+}
+
+button,
+a { font: inherit; }
+
+button { cursor: pointer; }
+
+.preview-page {
+  width: 100%;
+  min-height: 100dvh;
+  background: #fff;
+}
+
+.app-header {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: var(--header-height);
+  padding: 12px 20px;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid #eeeeeb;
+}
+
+.brand {
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+  font-size: 21px;
+}
+
+.icon-button,
+.avatar-button {
+  border: 0;
+  background: transparent;
+}
+
+.menu-button {
+  width: 38px;
+  height: 38px;
+  padding: 8px 5px;
+}
+
+.menu-button span {
+  display: block;
+  width: 25px;
+  height: 2px;
+  margin: 5px 0;
+  background: var(--ink);
+}
+
+.avatar-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: transparent;
+  background: #b8b8b8;
+}
+
+.category-scroll {
+  position: relative;
+  z-index: 9;
+  width: 100%;
+  height: var(--category-height);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+  background: #fff;
+  border-bottom: 1px solid #deded9;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-scroll::-webkit-scrollbar { display: none; }
+
+.category-list {
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-chip {
+  flex: 0 0 auto;
+  min-width: 68px;
+  height: 28px;
+  padding: 0 14px;
+  border: 1px solid #c8cabf;
+  border-radius: 999px;
+  color: #222;
+  background: #fff;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.category-chip.active {
+  color: #fff;
+  border-color: #a6b98a;
+  background: #a6b98a;
+}
+
+.map-stage { position: relative; height: calc(100dvh - var(--header-height) - var(--category-height)); min-height: 500px; overflow: hidden; background: #d9ecd2; }
+.leaflet-artisan-map { width: 100%; height: 100%; filter: saturate(.72) brightness(1.06); }
+.artisan-map-marker { background: transparent; border: 0; }
+.artisan-map-marker > span { position: relative; display: block; width: 34px; height: 34px; border: 3px solid #3f4646; border-radius: 50% 50% 50% 0; background: #f17e70; transform: rotate(-45deg); box-shadow: 0 2px 3px rgb(0 0 0 / 18%); }
+.artisan-map-marker i { position: absolute; inset: 8px; border: 2px solid #3f4646; border-radius: 50%; background: #f7f2e7; }
+
+.artisan-panel { position: fixed; z-index: 20; left: 6px; right: 6px; bottom: 0; max-height: 245px; overflow: hidden; padding: 20px 14px 10px; border: 1px solid #bbb; border-bottom: 0; border-radius: 10px 10px 0 0; background: #fffefa; transition: max-height .25s ease; }
+.artisan-panel.open { top: calc(var(--header-height) + var(--category-height) + 10px); max-height: none; overflow-y: auto; }
+.panel-handle { position: absolute; top: 4px; left: 50%; width: 52px; height: 14px; border: 0; background: transparent; transform: translateX(-50%); }
+.panel-handle span { display: block; width: 34px; height: 2px; margin: auto; border-radius: 3px; background: #c7c7c4; }
+.artisan-card { padding: 0 0 10px; }
+.artisan-heading { display: flex; align-items: center; gap: 10px; }
+.artisan-avatar, .drawer-avatar { flex: 0 0 auto; width: 58px; height: 58px; border-radius: 50%; background: #d0d0d0; }
+.artisan-tag { display: inline-block; padding: 1px 5px; border: 1px solid #222; border-radius: 999px; font-size: 8px; }
+.artisan-heading h2 { margin: 3px 0; font: 700 17px/1.05 Georgia, "Yu Mincho", serif; }
+.artisan-heading p { margin: 0; font-size: 9px; }
+.artisan-meta { display: flex; gap: 18px; margin: 10px 0 8px; font-size: 8px; }
+.artisan-summary { display: grid; grid-template-columns: 1fr 98px; gap: 10px; border-top: 1px solid #ddd; padding-top: 8px; }
+.artisan-summary p { margin: 0; font-size: 9px; line-height: 1.55; }
+.artisan-image { min-height: 65px; background-color: #fafafa; background-image: linear-gradient(45deg,#eee 25%,transparent 25%),linear-gradient(-45deg,#eee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eee 75%),linear-gradient(-45deg,transparent 75%,#eee 75%); background-size: 12px 12px; background-position: 0 0,0 6px,6px -6px,-6px 0; }
+.artisan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 9px; }
+.artisan-actions button { height: 34px; display: flex; justify-content: center; align-items: center; gap: 22px; border: 1px solid #222; border-radius: 3px; background: #fff; font-size: 10px; }
+.artisan-actions .support-button { color: #fff; border-color: #ef8172; background: #ef8172; }
+.similar-list { margin-top: 6px; border-top: 1px solid #222; }
+.similar-list h3 { margin: 18px 0 14px; font: 14px Georgia, "Yu Mincho", serif; }
+.artisan-card.compact { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #ddd; }
+
+.drawer-backdrop { position: fixed; z-index: 40; inset: 0; border: 0; background: rgb(8 18 12 / 68%); }
+.side-drawer { position: fixed; z-index: 50; inset: 0 auto 0 0; width: min(68vw, 310px); padding: 28px 20px; background: #fffefa; box-shadow: 6px 0 20px rgb(0 0 0 / 18%); }
+.drawer-user { display: flex; align-items: center; gap: 10px; }
+.drawer-user strong, .drawer-user span { display: block; font-size: 11px; }
+.drawer-user span { margin-top: 3px; font-size: 8px; }
+.drawer-avatar { width: 44px; height: 44px; }
+.profile-link { margin: 18px 0 8px; padding: 0; border: 0; background: transparent; font-size: 9px; }
+.side-drawer nav { display: flex; flex-direction: column; }
+.side-drawer nav a { padding: 9px 0; color: #111; text-decoration: none; font-size: 17px; font-weight: 700; }
+
+@media (min-width: 768px) {
+  :root { --header-height: 82px; }
+  .app-header { padding-inline: 32px; grid-template-columns: 48px 1fr 48px; }
+  .brand { font-size: 23px; }
+  .artisan-panel { left: auto; right: 24px; bottom: 24px; width: 390px; border-bottom: 1px solid #bbb; border-radius: 10px; }
+  .artisan-panel.open { left: auto; top: 104px; }
+}
+
+@media (min-width: 1000px) {
+  .category-list { justify-content: center; }
 }
 
 button:not(:disabled),
