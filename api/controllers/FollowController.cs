@@ -24,7 +24,7 @@ public class FollowController : ControllerBase
     var userId = User.GetUserId();
     if (userId == targetId)
     {
-      return BadRequest("自分自身をフォローすることはできません。");
+      return BadRequest(new { message = "自分自身をフォローすることはできません。" });
     }
 
     var targetExists = await _db.Users.AnyAsync(u => u.UserId == targetId);
@@ -37,7 +37,7 @@ public class FollowController : ControllerBase
       .AnyAsync(f => f.FollowerId == userId && f.FollowedId == targetId);
     if (exists)
     {
-      return Conflict("既にフォローしています。");
+      return Conflict(new { message = "既にフォローしています。" });
     }
 
     _db.Follows.Add(new Model.Follow
@@ -67,6 +67,30 @@ public class FollowController : ControllerBase
     _db.Follows.Remove(follow);
     await _db.SaveChangesAsync();
     return NoContent();
+  }
+
+  [Authorize]
+  [HttpGet("/api/follow/mine")]
+  public async Task<ActionResult<List<MyFollowDto>>> GetMyFollows()
+  {
+    var userId = User.GetUserId();
+
+    var follows = await _db.Follows
+      .Where(f => f.FollowerId == userId)
+      .Include(f => f.Followed)
+      .OrderByDescending(f => f.CreateAt)
+      .Select(f => new MyFollowDto(
+        f.FollowId,
+        f.FollowedId,
+        f.Followed!.Name,
+        f.Followed!.Avatar,
+        f.Followed!.ProductName,
+        f.Followed!.Prefecture,
+        f.Followed!.Address,
+        f.CreateAt))
+      .ToListAsync();
+
+    return Ok(follows);
   }
 
   [HttpGet("/api/follow/{userId}/followers")]

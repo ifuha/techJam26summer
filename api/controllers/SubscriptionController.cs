@@ -26,14 +26,14 @@ public class SubscriptionController : ControllerBase
     var supportExists = await _db.Supports.AnyAsync(s => s.SupportId == request.SupportId);
     if (!supportExists)
     {
-      return BadRequest("指定されたSupportが存在しません。");
+      return BadRequest(new { message = "指定されたSupportが存在しません。" });
     }
 
     var existing = await _db.Subscriptions
       .FirstOrDefaultAsync(s => s.SupportId == request.SupportId && s.UserId == userId);
     if (existing is not null)
     {
-      return Conflict("既にサブスクに入っています。");
+      return Conflict(new { message = "既にサブスクに入っています。" });
     }
 
     var subscription = new Api.Model.Subscription
@@ -49,6 +49,79 @@ public class SubscriptionController : ControllerBase
     await _db.SaveChangesAsync();
 
     return Ok(new SubscriptionStatusDto(true, subscription.Status, subscription.CreateAt.AddMonths(1)));
+  }
+
+  [Authorize]
+  [HttpGet("/api/SubScription/mine")]
+  public async Task<ActionResult<List<MySubscriptionDto>>> GetMySubscriptions()
+  {
+    var userId = User.GetUserId();
+
+    var subscriptions = await _db.Subscriptions
+      .Where(s => s.UserId == userId)
+      .Include(s => s.Support!).ThenInclude(sp => sp.User)
+      .OrderByDescending(s => s.CreateAt)
+      .Select(s => new MySubscriptionDto(
+        s.SubscriptionId,
+        s.SupportId,
+        s.Support!.Name,
+        s.Support!.Amount,
+        s.Support!.IsMonthly,
+        s.Support!.UserId,
+        s.Support!.User!.Name,
+        s.Support!.User!.Avatar,
+        s.Support!.User!.ProductName,
+        s.Support!.User!.Prefecture,
+        s.Support!.User!.Address,
+        s.CreateAt))
+      .ToListAsync();
+
+    return Ok(subscriptions);
+  }
+
+  [Authorize]
+  [HttpGet("/api/SubScription/creator/mine")]
+  public async Task<ActionResult<List<CreatorSupporterDto>>> GetMySupporters()
+  {
+    var userId = User.GetUserId();
+
+    var supporters = await _db.Subscriptions
+      .Where(s => s.Support!.UserId == userId)
+      .Include(s => s.User)
+      .Include(s => s.Support)
+      .OrderByDescending(s => s.CreateAt)
+      .Select(s => new CreatorSupporterDto(
+        s.SubscriptionId,
+        s.UserId,
+        s.User!.Name,
+        s.User!.Avatar,
+        s.SupportId,
+        s.Support!.Name,
+        s.Support!.Amount,
+        s.CreateAt,
+        _db.Thanks.Any(t => t.SubscriptionId == s.SubscriptionId)))
+      .ToListAsync();
+
+    return Ok(supporters);
+  }
+
+  [Authorize]
+  [HttpGet("/api/SubScription/creator/stats")]
+  public async Task<ActionResult<CreatorSubscriptionStatsDto>> GetCreatorStats()
+  {
+    var userId = User.GetUserId();
+    var monthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    var subscriberIds = await _db.Subscriptions
+      .Where(s => s.Support!.UserId == userId)
+      .Select(s => s.UserId)
+      .Distinct()
+      .ToListAsync();
+
+    var thisMonthCount = await _db.Subscriptions
+      .CountAsync(s => s.Support!.UserId == userId && s.CreateAt >= monthStart);
+
+    return Ok(new CreatorSubscriptionStatsDto(subscriberIds.Count, thisMonthCount));
   }
 
   [Authorize]

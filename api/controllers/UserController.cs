@@ -1,6 +1,7 @@
 using Api.Data;
 using Api.Dto;
 using Api.Helpers;
+using Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,12 @@ namespace Api.Controllers;
 public class UserController : ControllerBase
 {
   private readonly AppDbContext _db;
+  private readonly GeocodingService _geocodingService;
 
-  public UserController(AppDbContext db)
+  public UserController(AppDbContext db, GeocodingService geocodingService)
   {
     _db = db;
+    _geocodingService = geocodingService;
   }
 
   [HttpGet("/api/Users")]
@@ -22,7 +25,7 @@ public class UserController : ControllerBase
   {
     var users = await _db.Users
       .Select(u => new UserPublicDto(
-        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Prefecture,
+        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Bio, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .ToListAsync();
     return Ok(users);
@@ -34,7 +37,7 @@ public class UserController : ControllerBase
     var user = await _db.Users
       .Where(u => u.UserId == id)
       .Select(u => new UserPublicDto(
-        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Prefecture,
+        u.UserId, u.Name, u.Avatar, u.JobOrCommonMan, u.ProductName, u.Bio, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
@@ -47,7 +50,7 @@ public class UserController : ControllerBase
     var user = await _db.Users
       .Where(u => u.UserId == id)
       .Select(u => new UserAccountDto(
-        u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.Prefecture, u.ProductName,
+        u.UserId, u.Name, u.Email, u.Avatar, u.JobOrCommonMan, u.Address, u.Prefecture, u.Latitude, u.Longitude, u.ProductName, u.Bio, u.CraftId,
         u.ProfileTags.Select(pt => pt.Tag!.TagName).ToList(), u.CreateAt))
       .FirstOrDefaultAsync();
     return user is null ? NotFound() : Ok(user);
@@ -66,14 +69,64 @@ public class UserController : ControllerBase
 
     if (request.Prefecture is not null && !Prefectures.IsValid(request.Prefecture))
     {
-      return BadRequest("Prefectureが不正です(都道府県名を指定してください)。");
+      return BadRequest(new { message = "Prefectureが不正です(都道府県名を指定してください)。" });
     }
+
+    if (request.CraftId is not null)
+    {
+      if (!user.JobOrCommonMan)
+      {
+        return BadRequest(new { message = "一般ユーザーはCraftに紐付けられません。" });
+      }
+      var craftExists = await _db.Crafts.AnyAsync(c => c.CraftId == request.CraftId);
+      if (!craftExists)
+      {
+        return BadRequest(new { message = "指定されたCraftが存在しません。" });
+      }
+    }
+
+    var addressChanged = request.Address is not null && request.Address != user.Address;
+    var prefectureChanged = request.Prefecture is not null && request.Prefecture != user.Prefecture;
 
     if (request.Name is not null) user.Name = request.Name;
     if (request.Avatar is not null) user.Avatar = request.Avatar;
     if (request.Address is not null) user.Address = request.Address;
     if (request.Prefecture is not null) user.Prefecture = request.Prefecture;
     if (request.ProductName is not null) user.ProductName = request.ProductName;
+    if (request.Bio is not null) user.Bio = request.Bio;
+    if (request.CraftId is not null) user.CraftId = request.CraftId;
+
+    if (request.CraftId is null
+      && user.JobOrCommonMan
+      && (request.ProductName is not null || request.Prefecture is not null || user.CraftId is null)
+      && !string.IsNullOrWhiteSpace(user.ProductName)
+      && user.Prefecture is not null)
+    {
+      var candidates = await _db.Crafts
+        .Where(c => c.ProductName == user.ProductName && c.Prefecture == user.Prefecture)
+        .ToListAsync();
+      var matchedCraft = candidates.FirstOrDefault(c =>
+        c.ProductionAreas.Count > 0 && user.Address is not null && c.ProductionAreas.Contains(user.Address))
+        ?? candidates.FirstOrDefault(c => c.ProductionAreas.Count == 0);
+      if (matchedCraft is not null)
+      {
+        user.CraftId = matchedCraft.CraftId;
+      }
+    }
+
+    if (addressChanged || prefectureChanged)
+    {
+      var geocodeQuery = string.Join(" ", new[] { user.Prefecture, user.Address }.Where(s => !string.IsNullOrWhiteSpace(s)));
+      if (geocodeQuery.Length > 0)
+      {
+        var geocoded = await _geocodingService.GeocodeAsync(geocodeQuery);
+        if (geocoded is not null)
+        {
+          user.Latitude = geocoded.Latitude;
+          user.Longitude = geocoded.Longitude;
+        }
+      }
+    }
 
     await _db.SaveChangesAsync();
 
@@ -82,7 +135,7 @@ public class UserController : ControllerBase
       .Select(ut => ut.Tag!.TagName)
       .ToListAsync();
 
-    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.Prefecture, user.ProductName, tags, user.CreateAt));
+    return Ok(new UserAccountDto(user.UserId, user.Name, user.Email, user.Avatar, user.JobOrCommonMan, user.Address, user.Prefecture, user.Latitude, user.Longitude, user.ProductName, user.Bio, user.CraftId, tags, user.CreateAt));
   }
 
   [Authorize]

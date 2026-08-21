@@ -6,7 +6,12 @@ public record UserPublicDto(
   string? Avatar,
   bool JobOrCommonMan,
   string? ProductName,
+  string? Bio,
+  string? Address,
   string? Prefecture,
+  double? Latitude,
+  double? Longitude,
+  Guid? CraftId,
   List<string> Tags,
   DateTime CreateAt);
 
@@ -18,8 +23,19 @@ public record UserAccountDto(
   bool JobOrCommonMan,
   string? Address,
   string? Prefecture,
+  double? Latitude,
+  double? Longitude,
   string? ProductName,
+  string? Bio,
+  Guid? CraftId,
   List<string> Tags,
   DateTime CreateAt);
 
-public record UserPatchRequestDto(string? Name, string? Avatar, string? Address, string? Prefecture, string? ProductName);
+public record UserPatchRequestDto(
+  string? Name,
+  string? Avatar,
+  string? Address,
+  string? Prefecture,
+  string? ProductName,
+  string? Bio,
+  Guid? CraftId);

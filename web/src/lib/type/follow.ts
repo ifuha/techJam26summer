@@ -7,3 +7,15 @@ export type FollowStatus = {
 export type FollowerCount = {
   count: number;
 };
+
+// GET /api/follow/mine
+export type MyFollow = {
+  followId: string;
+  followedUserId: string;
+  followedName: string;
+  followedAvatar: string | null;
+  followedProductName: string | null;
+  followedPrefecture: string | null;
+  followedAddress: string | null;
+  createAt: string;
+};

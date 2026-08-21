@@ -1,43 +1,59 @@
 "use client";
 
-type HeaderProps = {
-  menuOpen: boolean;
-  onMenuToggle: () => void;
-  onProfileClick?: () => void;
+import { useEffect, useState } from "react";
+import { Head } from "./head";
+import { getTags } from "@/lib/api";
+import type { Tag } from "@/lib/type";
+
+export type HeaderProps = {
+  onFilterChange?: (tagName: string | null) => void;
 };
 
-export default function Header({
-  menuOpen,
-  onMenuToggle,
-  onProfileClick,
-}: HeaderProps) {
+export function Header({ onFilterChange }: HeaderProps) {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  useEffect(() => {
+    getTags()
+      .then(setTags)
+      .catch((error) => console.error("Failed to load tags:", error));
+  }, []);
+
+  const handleSelect = (tagName: string | null) => {
+    setSelected(tagName);
+    onFilterChange?.(tagName);
+  };
+
   return (
-    <header className="app-header">
-      <button
-        type="button"
-        className="icon-button menu-button"
-        aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
-        aria-expanded={menuOpen}
-        aria-controls="main-menu"
-        onClick={onMenuToggle}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
-
-      <a className="brand" href="/" aria-label="ホーム">
-        Logo
-      </a>
-
-      <button
-        type="button"
-        className="avatar-button"
-        aria-label="プロフィールを開く"
-        onClick={onProfileClick}
-      >
-        <span>私</span>
-      </button>
-    </header>
+    <div className="w-full bg-[#FAF9F6]">
+      <Head shadow={false} />
+      <div className="flex gap-2 overflow-x-auto px-4 pb-3">
+        <button
+          type="button"
+          onClick={() => handleSelect(null)}
+          className={`shrink-0 px-4 py-2 rounded-full border text-[14px] ${
+            selected === null
+              ? "bg-[#9CA86B] text-white border-[#9CA86B]"
+              : "bg-white text-black border-gray-300"
+          }`}
+        >
+          すべて
+        </button>
+        {tags.map((tag) => (
+          <button
+            key={tag.tagId}
+            type="button"
+            onClick={() => handleSelect(tag.tagName)}
+            className={`shrink-0 px-4 py-2 rounded-full border text-[14px] ${
+              selected === tag.tagName
+                ? "bg-[#9CA86B] text-white border-[#9CA86B]"
+                : "bg-white text-black border-gray-300"
+            }`}
+          >
+            {tag.tagName}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
