@@ -54,3 +54,16 @@ button:disabled {
 .animate-card-content {
   animation: card-content-fade-in 0.2s ease-out;
 }
+
+@keyframes arrow-bounce {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-arrow-bounce {
+  animation: arrow-bounce 1s ease-in-out infinite;
+}

@@ -17,6 +17,8 @@ import { Lock } from "./svg/lock";
 import { Leaf } from "./svg/leaf";
 import { Star } from "./svg/star";
 import { Pro } from "./svg/Pro";
+import { Plus } from "./svg/plus";
+import { Chart } from "./svg/chart";
 
 const icons = {
   group: Group,
@@ -38,6 +40,8 @@ const icons = {
   leaf: Leaf,
   star: Star,
   pro: Pro,
+  plus: Plus,
+  chart: Chart,
 } as const;
 export type IconProps = {
   size: number;

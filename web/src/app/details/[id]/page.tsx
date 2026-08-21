@@ -141,7 +141,7 @@ const Detail = () => {
 
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
-      <div className="fixed z-51 top-0 w-full">
+      <div className="fixed z-10 top-0 w-full">
         <Head />
       </div>
       <span className="h-13.5 block" />
@@ -152,7 +152,7 @@ const Detail = () => {
               const el = event.currentTarget;
               setActiveMediaIndex(Math.round(el.scrollLeft / el.clientWidth));
             }}
-            className="w-full aspect-5/2 flex gap-0.5 overflow-x-auto snap-x snap-mandatory scrollbar-none"
+            className="w-full md:aspect-2/1 aspect-5/4 flex gap-0.5 overflow-x-auto snap-x snap-mandatory scrollbar-none"
           >
             {publicMedia.map((media) => (
               <div
@@ -275,21 +275,44 @@ const Detail = () => {
             <div className="text-[15px] font-bold text-[#000000]">
               直近の活動記録
             </div>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex gap-2 overflow-x-auto scrollbar-none">
               {posts.map((post) => (
                 <div
                   key={post.postId}
-                  className="relative flex-1 aspect-square rounded-sm bg-gray-800 overflow-hidden"
+                  className="relative w-28 shrink-0 aspect-3/4 rounded-sm bg-gray-800 overflow-hidden"
                 >
-                  {post.media[0] && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={post.media[0].url}
-                      alt=""
-                      className={`w-full h-full object-cover ${
-                        post.isLocked ? "opacity-50" : ""
-                      }`}
-                    />
+                  {post.media[0] &&
+                    (post.media[0].type === "Movie" ? (
+                      // eslint-disable-next-line jsx-a11y/media-has-caption
+                      <video
+                        src={post.media[0].url}
+                        muted
+                        playsInline
+                        className={`w-full h-full object-cover ${
+                          post.isLocked ? "opacity-50" : ""
+                        }`}
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={post.media[0].url}
+                        alt=""
+                        className={`w-full h-full object-cover ${
+                          post.isLocked ? "opacity-50" : ""
+                        }`}
+                      />
+                    ))}
+                  {!post.isLocked && post.media[0]?.type === "Movie" && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-full bg-[#C9DAA5]/15 text-[#5E7231] flex items-center justify-center pl-0.5">
+                        ▶
+                      </div>
+                    </div>
+                  )}
+                  {!post.isLocked && post.media.length > 1 && (
+                    <div className="absolute top-1 right-1 rounded-full bg-[#C9DAA5]/15 text-[#5E7231] text-[10px] px-1.5 py-0.5">
+                      +{post.media.length - 1}
+                    </div>
                   )}
                   {post.isLocked && (
                     <div className="absolute inset-0 flex items-center justify-center text-white">

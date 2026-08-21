@@ -21,11 +21,22 @@ type MenuItem = {
   matchPath?: string;
 };
 
-const MENU_ITEMS: MenuItem[] = [
+const COMMON_MENU_ITEMS: MenuItem[] = [
   { label: "ホーム", icon: "home", href: "/", matchPath: "/" },
   { label: "探す", icon: "search", href: "/search" },
   { label: "応援中", icon: "heart", href: "/heart", matchPath: "/heart" },
   { label: "お気に入り", icon: "bookmark", href: "/bookmark", matchPath: "/bookmark" },
+  { label: "設定", icon: "settings", href: "/settings" },
+  { label: "ヘルプ", icon: "help", href: "/help" },
+];
+
+// 継承者(Job)アカウントには消費者向け機能(地図/お気に入り)は不要なので、
+// 代わりに自分のアカウント詳細(応援状況・活動記録・売り上げ)を表示するページに誘導する。
+const JOB_MENU_ITEMS: MenuItem[] = [
+  { label: "ホーム", icon: "home", href: "/account", matchPath: "/account" },
+  { label: "活動記録", icon: "document", href: "/account/works", matchPath: "/account/works" },
+  { label: "応援", icon: "heart", href: "/account" },
+  { label: "売り上げ", icon: "chart", href: "/account" },
   { label: "設定", icon: "settings", href: "/settings" },
   { label: "ヘルプ", icon: "help", href: "/help" },
 ];
@@ -78,16 +89,26 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </div>
         </div>
         <div className="px-4 pb-4">
-          <button
-            type="button"
-            className="w-full py-2 rounded-full border border-black text-[13px] text-[#000000] cursor-pointer"
-          >
-            プロフィールを編集
-          </button>
+          {account?.jobOrCommonMan ? (
+            <Link
+              href={`/details/${getUserId()}`}
+              onClick={onClose}
+              className="block w-full py-2 rounded-full border border-black text-[13px] text-center text-[#0000EE] underline"
+            >
+              プロフィールを表示
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="w-full py-2 rounded-full border border-black text-[13px] text-[#000000] cursor-pointer"
+            >
+              プロフィールを編集
+            </button>
+          )}
         </div>
         <div className="border-t border-[#EEEEEE]" />
         <nav className="px-2 py-2 cursor-pointer">
-          {MENU_ITEMS.map((item) => {
+          {(account?.jobOrCommonMan ? JOB_MENU_ITEMS : COMMON_MENU_ITEMS).map((item) => {
             const active = item.href !== undefined && pathname === item.href;
             return (
               <Link

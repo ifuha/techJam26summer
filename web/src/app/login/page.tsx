@@ -27,41 +27,63 @@ const Login = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">ログイン</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="メールアドレス"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          className="border rounded p-2"
-        />
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          className="border rounded p-2"
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-black text-white rounded p-2 disabled:opacity-50"
-        >
-          ログイン
-        </button>
-      </form>
-      <div className="mt-4 text-sm flex flex-col gap-1">
-        <Link href="/register/common" className="underline">
-          一般ユーザーとして新規登録
-        </Link>
-        <Link href="/register/job" className="underline">
-          継承者として新規登録
-        </Link>
+    <div className="w-screen min-h-dvh bg-[#FAF9F6]">
+      <div className="max-w-sm mx-auto px-4 pt-10 pb-16">
+        <div className="text-center text-[20px] text-black">Logo</div>
+
+        <div className="mt-6 text-[20px] font-bold text-[#000000]">ログイン</div>
+        <p className="mt-1 text-[13px] text-gray-500">
+          メールアドレスとパスワードを入力してください。
+        </p>
+
+        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3.25">
+          <div>
+            <div className="text-[13px] font-bold text-[#000000]">
+              メールアドレス
+            </div>
+            <input
+              type="email"
+              placeholder="example@mail.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              className="mt-1 w-full border rounded-sm p-2 text-[14px] text-black"
+            />
+          </div>
+
+          <div>
+            <div className="text-[13px] font-bold text-[#000000]">
+              パスワード
+            </div>
+            <input
+              type="password"
+              placeholder="パスワード"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              className="mt-1 w-full border rounded-sm p-2 text-[14px] text-black"
+            />
+          </div>
+
+          {error && <p className="text-[13px] text-red-500">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 w-full py-3 rounded-full bg-[#5E7231] text-white text-[14px] font-bold disabled:opacity-50"
+          >
+            ログイン
+          </button>
+        </form>
+
+        <div className="mt-6 flex flex-col items-center gap-2 text-[13px]">
+          <Link href="/register/common" className="text-[#5E7231] underline">
+            一般ユーザーとして新規登録
+          </Link>
+          <Link href="/register/job" className="text-[#5E7231] underline">
+            継承者として新規登録
+          </Link>
+        </div>
       </div>
     </div>
   );

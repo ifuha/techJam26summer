@@ -128,6 +128,16 @@ public class PostController : ControllerBase
   {
     var userId = User.GetUserId();
 
+    var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+    if (user is null)
+    {
+      return NotFound();
+    }
+    if (!user.JobOrCommonMan)
+    {
+      return BadRequest("一般ユーザーは活動記録を投稿できません。");
+    }
+
     if (request.SupportId is not null)
     {
       var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == request.SupportId);

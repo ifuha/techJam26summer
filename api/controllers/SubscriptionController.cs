@@ -80,6 +80,25 @@ public class SubscriptionController : ControllerBase
   }
 
   [Authorize]
+  [HttpGet("/api/SubScription/creator/stats")]
+  public async Task<ActionResult<CreatorSubscriptionStatsDto>> GetCreatorStats()
+  {
+    var userId = User.GetUserId();
+    var monthStart = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    var subscriberIds = await _db.Subscriptions
+      .Where(s => s.Support!.UserId == userId)
+      .Select(s => s.UserId)
+      .Distinct()
+      .ToListAsync();
+
+    var thisMonthCount = await _db.Subscriptions
+      .CountAsync(s => s.Support!.UserId == userId && s.CreateAt >= monthStart);
+
+    return Ok(new CreatorSubscriptionStatsDto(subscriberIds.Count, thisMonthCount));
+  }
+
+  [Authorize]
   [HttpDelete("/api/SubScription/{id}")]
   public async Task<IActionResult> Unsubscribe(Guid id)
   {

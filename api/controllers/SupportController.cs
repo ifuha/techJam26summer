@@ -26,6 +26,16 @@ public class SupportController : ControllerBase
   {
     var userId = User.GetUserId();
 
+    var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+    if (user is null)
+    {
+      return NotFound();
+    }
+    if (!user.JobOrCommonMan)
+    {
+      return BadRequest("一般ユーザーは応援プランを作成できません。");
+    }
+
     var support = new Model.Support
     {
       SupportId = Guid.NewGuid(),

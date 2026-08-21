@@ -8,7 +8,8 @@ public record RegisterRequestDto(
   string? Avatar,
   string? Address,
   string? Prefecture,
-  string? ProductName);
+  string? ProductName,
+  string? Bio);
 
 public record LoginRequestDto(string Email, string Password);
 

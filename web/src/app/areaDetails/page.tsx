@@ -47,7 +47,7 @@ function AreaDetailsContent() {
 
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
-      <div className="fixed z-51 top-0 w-full">
+      <div className="fixed z-10 top-0 w-full">
         <Head />
       </div>
       <span className="h-13.5 block" />

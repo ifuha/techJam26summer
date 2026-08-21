@@ -47,6 +47,7 @@ public class AuthController : ControllerBase
       Address = request.Address,
       Prefecture = request.Prefecture,
       ProductName = request.ProductName,
+      Bio = request.Bio,
       CreateAt = DateTime.UtcNow,
     };
 

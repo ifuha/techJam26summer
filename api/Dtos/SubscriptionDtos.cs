@@ -4,6 +4,8 @@ public record SubscriptionCreateRequestDto(Guid SupportId);
 
 public record SubscriptionStatusDto(bool IsSubscribed, bool? Status, DateTime? ExpiresAt);
 
+public record CreatorSubscriptionStatsDto(int SubscriberCount, int ThisMonthCount);
+
 public record MySubscriptionDto(
   Guid SubscriptionId,
   Guid SupportId,

@@ -8,6 +8,7 @@ export type RegisterRequest = {
   address: string | null;
   prefecture: string | null;
   productName: string | null;
+  bio: string | null;
 };
 
 // POST /api/login

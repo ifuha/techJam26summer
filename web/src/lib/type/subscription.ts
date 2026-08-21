@@ -10,6 +10,12 @@ export type SubscriptionStatus = {
   expiresAt: string | null;
 };
 
+// GET /api/SubScription/creator/stats
+export type CreatorSubscriptionStats = {
+  subscriberCount: number;
+  thisMonthCount: number;
+};
+
 // GET /api/SubScription/mine
 export type MySubscription = {
   subscriptionId: string;
