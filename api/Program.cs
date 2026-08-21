@@ -49,11 +49,13 @@ builder.Services.AddAuthorization(options =>
 });
 
 const string WebClientCorsPolicy = "WebClient";
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:3000" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(WebClientCorsPolicy, policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
