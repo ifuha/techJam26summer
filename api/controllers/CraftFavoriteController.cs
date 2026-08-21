@@ -33,7 +33,7 @@ public class CraftFavoriteController : ControllerBase
       .AnyAsync(cf => cf.UserId == userId && cf.CraftId == craftId);
     if (exists)
     {
-      return Conflict("既にお気に入りに登録しています。");
+      return Conflict(new { message = "既にお気に入りに登録しています。" });
     }
 
     _db.CraftFavorites.Add(new Model.CraftFavorite

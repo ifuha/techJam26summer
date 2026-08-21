@@ -15,7 +15,7 @@ const Search = () => {
   const [filterTag, setFilterTag] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col w-screen h-dvh bg-[#FAF9F6]">
+    <div className="flex flex-col w-full max-w-107.5 mx-auto h-dvh bg-[#FAF9F6]">
       <Header onFilterChange={setFilterTag} />
       <div className="relative flex-1 min-h-0">
         <Map

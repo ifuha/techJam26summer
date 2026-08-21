@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { Support, UserPublic } from "@/lib/type";
-import { getSupportsByCreator, getUser, subscribe } from "@/lib/api";
+import { getSupportsByCreator, getUser } from "@/lib/api";
 import { formatCount, getPlanIcon } from "@/lib/utils/format";
 
 const Plans = () => {
@@ -17,7 +17,6 @@ const Plans = () => {
   const [selectedSupportId, setSelectedSupportId] = useState<string | null>(
     null,
   );
-  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -37,13 +36,9 @@ const Plans = () => {
       .catch((error) => console.error("Failed to load supports:", error));
   }, [userId]);
 
-  const handleSubscribe = () => {
+  const handleProceed = () => {
     if (!selectedSupportId) return;
-    setSubscribing(true);
-    subscribe({ supportId: selectedSupportId })
-      .then(() => router.push("/heart"))
-      .catch((error) => console.error("Failed to subscribe:", error))
-      .finally(() => setSubscribing(false));
+    router.push(`/details/${userId}/checkout?supportId=${selectedSupportId}`);
   };
 
   return (
@@ -111,8 +106,8 @@ const Plans = () => {
 
         <button
           type="button"
-          onClick={handleSubscribe}
-          disabled={!selectedSupportId || subscribing}
+          onClick={handleProceed}
+          disabled={!selectedSupportId}
           className="mt-3.25 w-full py-3 rounded-full bg-[#EE8978] text-[#FFFFFF] text-[14px] disabled:opacity-50"
         >
           このプランで応援する

@@ -69,19 +69,19 @@ public class UserController : ControllerBase
 
     if (request.Prefecture is not null && !Prefectures.IsValid(request.Prefecture))
     {
-      return BadRequest("Prefectureが不正です(都道府県名を指定してください)。");
+      return BadRequest(new { message = "Prefectureが不正です(都道府県名を指定してください)。" });
     }
 
     if (request.CraftId is not null)
     {
       if (!user.JobOrCommonMan)
       {
-        return BadRequest("一般ユーザーはCraftに紐付けられません。");
+        return BadRequest(new { message = "一般ユーザーはCraftに紐付けられません。" });
       }
       var craftExists = await _db.Crafts.AnyAsync(c => c.CraftId == request.CraftId);
       if (!craftExists)
       {
-        return BadRequest("指定されたCraftが存在しません。");
+        return BadRequest(new { message = "指定されたCraftが存在しません。" });
       }
     }
 

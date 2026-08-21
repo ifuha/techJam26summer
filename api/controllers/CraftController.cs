@@ -65,7 +65,7 @@ public class CraftController : ControllerBase
   {
     if (request.Prefecture is not null && !Prefectures.IsValid(request.Prefecture))
     {
-      return BadRequest("Prefectureが不正です(都道府県名を指定してください)。");
+      return BadRequest(new { message = "Prefectureが不正です(都道府県名を指定してください)。" });
     }
 
     var craft = new Model.Craft
@@ -113,7 +113,7 @@ public class CraftController : ControllerBase
 
     if (request.Prefecture is not null && !Prefectures.IsValid(request.Prefecture))
     {
-      return BadRequest("Prefectureが不正です(都道府県名を指定してください)。");
+      return BadRequest(new { message = "Prefectureが不正です(都道府県名を指定してください)。" });
     }
 
     var addressChanged = request.Address is not null && request.Address != craft.Address;

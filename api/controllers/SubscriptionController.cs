@@ -26,14 +26,14 @@ public class SubscriptionController : ControllerBase
     var supportExists = await _db.Supports.AnyAsync(s => s.SupportId == request.SupportId);
     if (!supportExists)
     {
-      return BadRequest("指定されたSupportが存在しません。");
+      return BadRequest(new { message = "指定されたSupportが存在しません。" });
     }
 
     var existing = await _db.Subscriptions
       .FirstOrDefaultAsync(s => s.SupportId == request.SupportId && s.UserId == userId);
     if (existing is not null)
     {
-      return Conflict("既にサブスクに入っています。");
+      return Conflict(new { message = "既にサブスクに入っています。" });
     }
 
     var subscription = new Api.Model.Subscription
@@ -77,6 +77,31 @@ public class SubscriptionController : ControllerBase
       .ToListAsync();
 
     return Ok(subscriptions);
+  }
+
+  [Authorize]
+  [HttpGet("/api/SubScription/creator/mine")]
+  public async Task<ActionResult<List<CreatorSupporterDto>>> GetMySupporters()
+  {
+    var userId = User.GetUserId();
+
+    var supporters = await _db.Subscriptions
+      .Where(s => s.Support!.UserId == userId)
+      .Include(s => s.User)
+      .Include(s => s.Support)
+      .OrderByDescending(s => s.CreateAt)
+      .Select(s => new CreatorSupporterDto(
+        s.SubscriptionId,
+        s.UserId,
+        s.User!.Name,
+        s.User!.Avatar,
+        s.SupportId,
+        s.Support!.Name,
+        s.CreateAt,
+        _db.Thanks.Any(t => t.SubscriptionId == s.SubscriptionId)))
+      .ToListAsync();
+
+    return Ok(supporters);
   }
 
   [Authorize]

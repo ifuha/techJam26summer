@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Icon } from "./icons/icon";
 import { Sidebar } from "./sidebar";
+import { getUserId } from "@/lib/utils/access-token";
 
 export type HeadProps = {
   shadow?: boolean;
 };
 
 export function Head({ shadow = true }: HeadProps) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(getUserId() !== null);
+  }, []);
 
   return (
     <div
@@ -25,9 +33,17 @@ export function Head({ shadow = true }: HeadProps) {
         <Icon name="menu" size={22} />
       </button>
       <div className="text-[20px] text-black">Logo</div>
-      <div className="cursor-pointer">
-        <Icon name="bell" size={22} />
-      </div>
+      {isLoggedIn ? (
+        <button
+          type="button"
+          onClick={() => router.push("/notifications")}
+          className="cursor-pointer"
+        >
+          <Icon name="bell" size={22} />
+        </button>
+      ) : (
+        <div className="w-5.5 h-5.5" />
+      )}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </div>
   );

@@ -24,7 +24,7 @@ public class FollowController : ControllerBase
     var userId = User.GetUserId();
     if (userId == targetId)
     {
-      return BadRequest("自分自身をフォローすることはできません。");
+      return BadRequest(new { message = "自分自身をフォローすることはできません。" });
     }
 
     var targetExists = await _db.Users.AnyAsync(u => u.UserId == targetId);
@@ -37,7 +37,7 @@ public class FollowController : ControllerBase
       .AnyAsync(f => f.FollowerId == userId && f.FollowedId == targetId);
     if (exists)
     {
-      return Conflict("既にフォローしています。");
+      return Conflict(new { message = "既にフォローしています。" });
     }
 
     _db.Follows.Add(new Model.Follow

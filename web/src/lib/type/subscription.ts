@@ -31,3 +31,15 @@ export type MySubscription = {
   creatorAddress: string | null;
   createAt: string;
 };
+
+// GET /api/SubScription/creator/mine
+export type CreatorSupporter = {
+  subscriptionId: string;
+  supporterUserId: string;
+  supporterName: string;
+  supporterAvatar: string | null;
+  supportId: string;
+  supportName: string;
+  createAt: string;
+  isThanked: boolean;
+};

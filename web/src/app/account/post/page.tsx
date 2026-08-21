@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
-import type { PostMediaInput, Support, Tag } from "@/lib/type";
+import type { PostMediaInput, Support, Tag, UserAccount } from "@/lib/type";
 import {
   createPost,
   createPostTag,
@@ -26,6 +26,7 @@ const CreatePost = () => {
   const [step, setStep] = useState<Step>("form");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [account, setAccount] = useState<UserAccount | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [categoryTagId, setCategoryTagId] = useState("");
   const [supports, setSupports] = useState<Support[]>([]);
@@ -49,10 +50,12 @@ const CreatePost = () => {
     if (!userId) return;
 
     getUserAccount(userId)
-      .then((account) => {
-        if (!account.jobOrCommonMan) {
+      .then((result) => {
+        if (!result.jobOrCommonMan) {
           router.replace("/");
+          return;
         }
+        setAccount(result);
       })
       .catch((error) => console.error("Failed to load account:", error));
 
@@ -63,6 +66,13 @@ const CreatePost = () => {
       .then(setSupports)
       .catch((error) => console.error("Failed to load supports:", error));
   }, []);
+
+  // Pre-select the creator's own assigned category as the post's category.
+  useEffect(() => {
+    if (categoryTagId || !account?.tags[0] || tags.length === 0) return;
+    const match = tags.find((tag) => tag.tagName === account.tags[0]);
+    if (match) setCategoryTagId(match.tagId);
+  }, [account, tags, categoryTagId]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);

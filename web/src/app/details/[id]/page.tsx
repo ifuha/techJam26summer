@@ -128,6 +128,7 @@ const Detail = () => {
     .filter((post) => post.supportId === null)
     .flatMap((post) => post.media)
     .slice(0, 4);
+  const hasBanner = publicMedia.length > 0 || !!user.avatar;
 
   const latestPost = posts[0];
   const daysSinceLatestPost = latestPost
@@ -145,60 +146,73 @@ const Detail = () => {
         <Head />
       </div>
       <span className="h-13.5 block" />
-      <div className="relative">
-        {publicMedia.length > 0 ? (
-          <div
-            onScroll={(event) => {
-              const el = event.currentTarget;
-              setActiveMediaIndex(Math.round(el.scrollLeft / el.clientWidth));
-            }}
-            className="w-full md:aspect-2/1 aspect-5/4 flex gap-0.5 overflow-x-auto snap-x snap-mandatory scrollbar-none"
-          >
-            {publicMedia.map((media) => (
-              <div
-                key={media.postMediaId}
-                className="w-full h-full shrink-0 snap-center bg-gray-200 overflow-hidden"
-              >
-                {media.type === "Movie" ? (
-                  // eslint-disable-next-line jsx-a11y/media-has-caption
-                  <video
-                    src={media.url}
-                    controls
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={media.url}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="w-full aspect-5/2 bg-gray-200 overflow-hidden">
-            {user.avatar && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-full h-full object-cover"
-              />
-            )}
-          </div>
-        )}
+      {hasBanner ? (
+        <div className="relative">
+          {publicMedia.length > 0 ? (
+            <div
+              onScroll={(event) => {
+                const el = event.currentTarget;
+                setActiveMediaIndex(Math.round(el.scrollLeft / el.clientWidth));
+              }}
+              className="w-full md:aspect-2/1 aspect-5/4 flex gap-0.5 overflow-x-auto snap-x snap-mandatory scrollbar-none"
+            >
+              {publicMedia.map((media) => (
+                <div
+                  key={media.postMediaId}
+                  className="w-full h-full shrink-0 snap-center bg-gray-200 overflow-hidden"
+                >
+                  {media.type === "Movie" ? (
+                    // eslint-disable-next-line jsx-a11y/media-has-caption
+                    <video
+                      src={media.url}
+                      controls
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={media.url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full aspect-5/2 bg-gray-200 overflow-hidden">
+              {user.avatar && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+          )}
 
-        <div className="absolute bottom-2.75 right-4 flex items-center bg-white gap-1.5 px-3 py-1 rounded-full shadow-xl text-[12px] text-[#000000]">
-          <div className="text-[#F43939] pt-1">
-            <Icon name="heart" size={16} />
-          </div>
-          <div className="text-black">
-            {formatCount(followerCount ?? 0)}人が応援中
+          <div className="absolute bottom-2.75 right-4 flex items-center bg-white gap-1.5 px-3 py-1 rounded-full shadow-xl text-[12px] text-[#000000]">
+            <div className="text-[#F43939] pt-1">
+              <Icon name="heart" size={16} />
+            </div>
+            <div className="text-black">
+              {formatCount(followerCount ?? 0)}人が応援中
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="px-4 pt-2.75 flex justify-end">
+          <div className="flex items-center bg-white gap-1.5 px-3 py-1 rounded-full shadow-xl text-[12px] text-[#000000]">
+            <div className="text-[#F43939] pt-1">
+              <Icon name="heart" size={16} />
+            </div>
+            <div className="text-black">
+              {formatCount(followerCount ?? 0)}人が応援中
+            </div>
+          </div>
+        </div>
+      )}
 
       {publicMedia.length > 1 && (
         <div className="flex justify-center gap-1.5 py-2.75">
@@ -399,7 +413,7 @@ const Detail = () => {
             </button>
           </div>
         )}
-        <div className="pb-24" />
+        <div className="pb-30" />
       </div>
       <div className="w-full fixed bottom-0 h-21.75 flex justify-center items-start py-3.25 bg-white px-4 shadow-[0px_0px_5px_5px_rgba(0,0,0,0.25)]">
         <Link

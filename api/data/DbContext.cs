@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
   public DbSet<Subscription> Subscriptions => Set<Subscription>();
   public DbSet<Support> Supports => Set<Support>();
   public DbSet<Tag> Tags => Set<Tag>();
+  public DbSet<Thanks> Thanks => Set<Thanks>();
   public DbSet<User> Users => Set<User>();
   public DbSet<UserTag> UserTags => Set<UserTag>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,5 +69,14 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<Like>().HasIndex(l => new { l.UserId, l.PostId }).IsUnique();
     modelBuilder.Entity<Subscription>().Property(r => r.Status).HasConversion<string>();
     modelBuilder.Entity<PostMedia>().Property(m => m.Type).HasConversion<string>();
+
+    modelBuilder
+      .Entity<Thanks>()
+      .HasOne(t => t.Subscription)
+      .WithMany()
+      .HasForeignKey(t => t.SubscriptionId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Thanks>().HasIndex(t => t.SubscriptionId).IsUnique();
   }
 }

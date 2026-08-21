@@ -19,3 +19,13 @@ public record MySubscriptionDto(
   string? CreatorPrefecture,
   string? CreatorAddress,
   DateTime CreateAt);
+
+public record CreatorSupporterDto(
+  Guid SubscriptionId,
+  Guid SupporterUserId,
+  string SupporterName,
+  string? SupporterAvatar,
+  Guid SupportId,
+  string SupportName,
+  DateTime CreateAt,
+  bool IsThanked);

@@ -52,6 +52,7 @@ export function Icon({ size, name }: IconProps) {
   const IconComponent = icons[name];
   return (
     <div
+      className="inline-flex items-center justify-center shrink-0"
       style={{
         width: size,
         height: size,

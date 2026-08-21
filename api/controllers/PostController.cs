@@ -135,7 +135,7 @@ public class PostController : ControllerBase
     }
     if (!user.JobOrCommonMan)
     {
-      return BadRequest("一般ユーザーは活動記録を投稿できません。");
+      return BadRequest(new { message = "一般ユーザーは活動記録を投稿できません。" });
     }
 
     if (request.SupportId is not null)
@@ -143,7 +143,7 @@ public class PostController : ControllerBase
       var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == request.SupportId);
       if (support is null)
       {
-        return BadRequest("指定されたSupportが存在しません。");
+        return BadRequest(new { message = "指定されたSupportが存在しません。" });
       }
       if (support.UserId != userId)
       {
@@ -199,7 +199,7 @@ public class PostController : ControllerBase
       var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == request.SupportId);
       if (support is null)
       {
-        return BadRequest("指定されたSupportが存在しません。");
+        return BadRequest(new { message = "指定されたSupportが存在しません。" });
       }
       if (support.UserId != userId)
       {

@@ -14,3 +14,9 @@ public record SupportCreateRequestDto(
   bool IsMonthly,
   int Amount,
   List<string>? Benefits);
+
+public record SupportPatchRequestDto(
+  string? Name,
+  bool? IsMonthly,
+  int? Amount,
+  List<string>? Benefits);

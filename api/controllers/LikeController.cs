@@ -26,14 +26,14 @@ public class LikeController : ControllerBase
     var postExists = await _db.Posts.AnyAsync(p => p.PostId == request.PostId);
     if (!postExists)
     {
-      return BadRequest("指定されたPostが存在しません。");
+      return BadRequest(new { message = "指定されたPostが存在しません。" });
     }
 
     var existing = await _db.Likes
       .FirstOrDefaultAsync(l => l.PostId == request.PostId && l.UserId == userId);
     if (existing is not null)
     {
-      return Conflict("既にいいねしています。");
+      return Conflict(new { message = "既にいいねしています。" });
     }
 
     _db.Likes.Add(new Model.Like

@@ -337,6 +337,26 @@ namespace api.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("Api.Model.Thanks", b =>
+                {
+                    b.Property<Guid>("ThanksId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ThanksId");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique();
+
+                    b.ToTable("Thanks");
+                });
+
             modelBuilder.Entity("Api.Model.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -550,6 +570,17 @@ namespace api.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Api.Model.Thanks", b =>
+                {
+                    b.HasOne("Api.Model.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("Api.Model.User", b =>

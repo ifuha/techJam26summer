@@ -63,19 +63,19 @@ public class UploadController : ControllerBase
   {
     if (string.IsNullOrEmpty(bucketName))
     {
-      return Problem("R2のバケットが設定されていません。", statusCode: StatusCodes.Status500InternalServerError);
+      return StatusCode(StatusCodes.Status500InternalServerError, new { message = "R2のバケットが設定されていません。" });
     }
     if (file.Length == 0)
     {
-      return BadRequest("ファイルが空です。");
+      return BadRequest(new { message = "ファイルが空です。" });
     }
     if (file.Length > maxBytes)
     {
-      return BadRequest($"ファイルサイズが上限({maxBytes}バイト)を超えています。");
+      return BadRequest(new { message = $"ファイルサイズが上限({maxBytes}バイト)を超えています。" });
     }
     if (!allowedContentTypes.Contains(file.ContentType))
     {
-      return BadRequest($"対応していないファイル形式です: {file.ContentType}");
+      return BadRequest(new { message = $"対応していないファイル形式です: {file.ContentType}" });
     }
 
     var blobName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";

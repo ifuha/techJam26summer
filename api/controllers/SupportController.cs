@@ -33,7 +33,7 @@ public class SupportController : ControllerBase
     }
     if (!user.JobOrCommonMan)
     {
-      return BadRequest("一般ユーザーは応援プランを作成できません。");
+      return BadRequest(new { message = "一般ユーザーは応援プランを作成できません。" });
     }
 
     var support = new Model.Support
@@ -72,6 +72,30 @@ public class SupportController : ControllerBase
       .Select(s => new SupportDto(s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
       .FirstOrDefaultAsync();
     return support is null ? NotFound() : Ok(support);
+  }
+
+  [Authorize]
+  [HttpPatch("/api/support/{id}")]
+  public async Task<ActionResult<SupportDto>> PatchSupport(Guid id, SupportPatchRequestDto request)
+  {
+    var userId = User.GetUserId();
+    var support = await _db.Supports.FirstOrDefaultAsync(s => s.SupportId == id);
+    if (support is null)
+    {
+      return NotFound();
+    }
+    if (support.UserId != userId)
+    {
+      return Forbid();
+    }
+
+    if (request.Name is not null) support.Name = request.Name;
+    if (request.IsMonthly is not null) support.IsMonthly = request.IsMonthly.Value;
+    if (request.Amount is not null) support.Amount = request.Amount.Value;
+    if (request.Benefits is not null) support.Benefits = request.Benefits;
+
+    await _db.SaveChangesAsync();
+    return Ok(ToDto(support));
   }
 
   [Authorize]
