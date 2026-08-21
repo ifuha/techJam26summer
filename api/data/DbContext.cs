@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     : base(options) { }
   public DbSet<Admin> Admins => Set<Admin>();
   public DbSet<Craft> Crafts => Set<Craft>();
+  public DbSet<CraftFavorite> CraftFavorites => Set<CraftFavorite>();
   public DbSet<Follow> Follows => Set<Follow>();
   public DbSet<Like> Likes => Set<Like>();
   public DbSet<Post> Posts => Set<Post>();
@@ -17,6 +18,7 @@ public class AppDbContext : DbContext
   public DbSet<Subscription> Subscriptions => Set<Subscription>();
   public DbSet<Support> Supports => Set<Support>();
   public DbSet<Tag> Tags => Set<Tag>();
+  public DbSet<Thanks> Thanks => Set<Thanks>();
   public DbSet<User> Users => Set<User>();
   public DbSet<UserTag> UserTags => Set<UserTag>();
   protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,6 +42,22 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<Follow>().HasIndex(f => new { f.FollowerId, f.FollowedId }).IsUnique();
 
     modelBuilder
+      .Entity<CraftFavorite>()
+      .HasOne(cf => cf.User)
+      .WithMany(u => u.CraftFavorites)
+      .HasForeignKey(cf => cf.UserId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder
+      .Entity<CraftFavorite>()
+      .HasOne(cf => cf.Craft)
+      .WithMany(c => c.Favorites)
+      .HasForeignKey(cf => cf.CraftId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    modelBuilder.Entity<CraftFavorite>().HasIndex(cf => new { cf.UserId, cf.CraftId }).IsUnique();
+
+    modelBuilder
       .Entity<User>()
       .HasOne(u => u.Craft)
       .WithMany(c => c.Successors)
@@ -51,5 +69,14 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<Like>().HasIndex(l => new { l.UserId, l.PostId }).IsUnique();
     modelBuilder.Entity<Subscription>().Property(r => r.Status).HasConversion<string>();
     modelBuilder.Entity<PostMedia>().Property(m => m.Type).HasConversion<string>();
+
+    modelBuilder
+      .Entity<Thanks>()
+      .HasOne(t => t.Subscription)
+      .WithMany()
+      .HasForeignKey(t => t.SubscriptionId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Thanks>().HasIndex(t => t.SubscriptionId).IsUnique();
   }
 }

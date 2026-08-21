@@ -25,7 +25,7 @@ public class AdminController : ControllerBase
     var emailTaken = await _db.Admins.AnyAsync(a => a.Email == request.Email);
     if (emailTaken)
     {
-      return Conflict("このメールアドレスは既に使用されています。");
+      return Conflict(new { message = "このメールアドレスは既に使用されています。" });
     }
 
     var admin = new Admin
@@ -50,7 +50,7 @@ public class AdminController : ControllerBase
     var admin = await _db.Admins.FirstOrDefaultAsync(a => a.Email == request.Email);
     if (admin is null || !BCrypt.Net.BCrypt.Verify(request.Password, admin.Password))
     {
-      return Unauthorized("メールアドレスまたはパスワードが正しくありません。");
+      return Unauthorized(new { message = "メールアドレスまたはパスワードが正しくありません。" });
     }
 
     var token = _jwtTokenService.CreateAdminToken(admin);

@@ -102,6 +102,31 @@ namespace api.Migrations
                     b.ToTable("Crafts");
                 });
 
+            modelBuilder.Entity("Api.Model.CraftFavorite", b =>
+                {
+                    b.Property<Guid>("CraftFavoriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CraftId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("CraftFavoriteId");
+
+                    b.HasIndex("CraftId");
+
+                    b.HasIndex("UserId", "CraftId")
+                        .IsUnique();
+
+                    b.ToTable("CraftFavorites");
+                });
+
             modelBuilder.Entity("Api.Model.Follow", b =>
                 {
                     b.Property<Guid>("FollowId")
@@ -168,7 +193,7 @@ namespace api.Migrations
                     b.Property<string>("Subscription")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("SupportId")
+                    b.Property<Guid?>("SupportId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -265,11 +290,19 @@ namespace api.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.PrimitiveCollection<List<string>>("Benefits")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsMonthly")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -304,6 +337,26 @@ namespace api.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("Api.Model.Thanks", b =>
+                {
+                    b.Property<Guid>("ThanksId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ThanksId");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique();
+
+                    b.ToTable("Thanks");
+                });
+
             modelBuilder.Entity("Api.Model.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -314,6 +367,9 @@ namespace api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Bio")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("CraftId")
@@ -371,6 +427,25 @@ namespace api.Migrations
                     b.ToTable("UserTags");
                 });
 
+            modelBuilder.Entity("Api.Model.CraftFavorite", b =>
+                {
+                    b.HasOne("Api.Model.Craft", "Craft")
+                        .WithMany("Favorites")
+                        .HasForeignKey("CraftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Api.Model.User", "User")
+                        .WithMany("CraftFavorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Craft");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Api.Model.Follow", b =>
                 {
                     b.HasOne("Api.Model.User", "Followed")
@@ -413,9 +488,7 @@ namespace api.Migrations
                 {
                     b.HasOne("Api.Model.Support", "Support")
                         .WithMany("Post")
-                        .HasForeignKey("SupportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SupportId");
 
                     b.HasOne("Api.Model.User", "User")
                         .WithMany("Posts")
@@ -499,6 +572,17 @@ namespace api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Api.Model.Thanks", b =>
+                {
+                    b.HasOne("Api.Model.Subscription", "Subscription")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+                });
+
             modelBuilder.Entity("Api.Model.User", b =>
                 {
                     b.HasOne("Api.Model.Craft", "Craft")
@@ -530,6 +614,8 @@ namespace api.Migrations
 
             modelBuilder.Entity("Api.Model.Craft", b =>
                 {
+                    b.Navigation("Favorites");
+
                     b.Navigation("Successors");
                 });
 
@@ -549,6 +635,8 @@ namespace api.Migrations
 
             modelBuilder.Entity("Api.Model.User", b =>
                 {
+                    b.Navigation("CraftFavorites");
+
                     b.Navigation("Followeds");
 
                     b.Navigation("Followers");

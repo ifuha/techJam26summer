@@ -26,7 +26,7 @@ export function Header({ onFilterChange }: HeaderProps) {
 
   return (
     <div className="w-full bg-[#FAF9F6]">
-      <Head />
+      <Head shadow={false} />
       <div className="flex gap-2 overflow-x-auto px-4 pb-3">
         <button
           type="button"

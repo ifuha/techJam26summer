@@ -8,10 +8,11 @@ public record PostDto(
   Guid PostId,
   string Title,
   Guid UserId,
-  string ReportMassege,
+  string? ReportMassege,
   string? Subscription,
   DateTime CreateAt,
-  Guid SupportId,
+  Guid? SupportId,
+  bool IsLocked,
   int LikeCount,
   List<string> Tags,
   List<PostMediaDto> Media);
@@ -20,7 +21,7 @@ public record PostCreateRequestDto(
   string Title,
   string ReportMassege,
   string? Subscription,
-  Guid SupportId,
+  Guid? SupportId,
   List<PostMediaInputDto>? Media);
 
 public record PostPatchRequestDto(

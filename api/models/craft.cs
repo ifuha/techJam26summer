@@ -17,4 +17,5 @@ public class Craft
   public List<string> ProductionAreas { get;set; } = new List<string>();
   public DateTime CreateAt { get;set; }
   public ICollection<User> Successors { get;set; } = new List<User>();
+  public ICollection<CraftFavorite> Favorites { get;set; } = new List<CraftFavorite>();
 }

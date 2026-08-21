@@ -2,9 +2,21 @@ namespace Api.Dto;
 
 public record SupportDto(
   Guid SupportId,
+  string Name,
   bool IsMonthly,
   int Amount,
+  List<string> Benefits,
   DateTime CreateAt,
   Guid UserId);
 
-public record SupportCreateRequestDto(bool IsMonthly, int Amount);
+public record SupportCreateRequestDto(
+  string Name,
+  bool IsMonthly,
+  int Amount,
+  List<string>? Benefits);
+
+public record SupportPatchRequestDto(
+  string? Name,
+  bool? IsMonthly,
+  int? Amount,
+  List<string>? Benefits);

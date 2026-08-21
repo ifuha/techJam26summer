@@ -9,7 +9,7 @@ public class Post
   public string ReportMassege { get;set; } = string.Empty;
   public string? Subscription { get;set; } = string.Empty;
   public DateTime CreateAt { get;set; }
-  public Guid SupportId { get;set; }
+  public Guid? SupportId { get;set; }
   public Support? Support { get;set; }
   public ICollection<PostTag> PostTags { get;set; } = new List<PostTag>();
   public ICollection<Like> Likes { get;set; } = new List<Like>();

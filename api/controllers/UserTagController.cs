@@ -40,20 +40,20 @@ public class UserTagController : ControllerBase
     }
     if (!user.JobOrCommonMan)
     {
-      return BadRequest("一般ユーザーにはTagを付けられません。");
+      return BadRequest(new { message = "一般ユーザーにはTagを付けられません。" });
     }
 
     var tag = await _db.Tags.FirstOrDefaultAsync(t => t.TagId == request.TagId);
     if (tag is null)
     {
-      return BadRequest("指定されたTagが存在しません。");
+      return BadRequest(new { message = "指定されたTagが存在しません。" });
     }
 
     var exists = await _db.UserTags
       .AnyAsync(ut => ut.UserId == userId && ut.TagId == request.TagId);
     if (exists)
     {
-      return Conflict("既に紐付いています。");
+      return Conflict(new { message = "既に紐付いています。" });
     }
 
     _db.UserTags.Add(new Model.UserTag

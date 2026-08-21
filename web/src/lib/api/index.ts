@@ -10,3 +10,5 @@ export * from "./tag";
 export * from "./follow";
 export * from "./upload";
 export * from "./craft";
+export * from "./craftFavorite";
+export * from "./thanks";

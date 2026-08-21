@@ -13,6 +13,7 @@ public class User
   public double? Latitude { get;set; }
   public double? Longitude { get;set; }
   public string? ProductName { get;set; }
+  public string? Bio { get;set; }
   public Guid? CraftId { get;set; }
   public Craft? Craft { get;set; }
   public DateTime CreateAt { get;set; }
@@ -23,4 +24,5 @@ public class User
   public ICollection<Follow> Followeds { get;set; } = new List<Follow>();
   public ICollection<Tag> Tags { get;set; } = new List<Tag>();
   public ICollection<UserTag> ProfileTags { get;set; } = new List<UserTag>();
+  public ICollection<CraftFavorite> CraftFavorites { get;set; } = new List<CraftFavorite>();
 }

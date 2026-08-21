@@ -36,7 +36,7 @@ public class PostTagController : ControllerBase
     var post = await _db.Posts.FirstOrDefaultAsync(p => p.PostId == request.PostId);
     if (post is null)
     {
-      return BadRequest("指定されたPostが存在しません。");
+      return BadRequest(new { message = "指定されたPostが存在しません。" });
     }
     if (post.UserId != userId)
     {
@@ -46,14 +46,14 @@ public class PostTagController : ControllerBase
     var tag = await _db.Tags.FirstOrDefaultAsync(t => t.TagId == request.TagId);
     if (tag is null)
     {
-      return BadRequest("指定されたTagが存在しません。");
+      return BadRequest(new { message = "指定されたTagが存在しません。" });
     }
 
     var exists = await _db.PostTags
       .AnyAsync(pt => pt.PostId == request.PostId && pt.TagId == request.TagId);
     if (exists)
     {
-      return Conflict("既に紐付いています。");
+      return Conflict(new { message = "既に紐付いています。" });
     }
 
     _db.PostTags.Add(new Model.PostTag
