@@ -38,6 +38,7 @@ function createCraftPinElement(count: number, cityName: string | null) {
   wrapper.style.position = "relative";
   wrapper.style.width = `${CRAFT_PIN_WIDTH}px`;
   wrapper.style.height = `${CRAFT_PIN_HEIGHT}px`;
+  wrapper.style.transformOrigin = "bottom center";
   root.appendChild(wrapper);
 
   const svg = document.createElementNS(SVG_NS, "svg");
@@ -101,7 +102,18 @@ function createCraftPinElement(count: number, cityName: string | null) {
     );
   };
 
-  return { root, setSelected };
+  const setScale = (scale: number) => {
+    wrapper.style.transform = `scale(${scale})`;
+  };
+
+  return { root, setSelected, setScale };
+}
+
+function pinScaleForZoom(zoom: number) {
+  const MIN_SCALE = 0.8;
+  const MAX_SCALE = 2;
+  const scale = MIN_SCALE + (zoom - JAPAN_ZOOM) * 0.1;
+  return Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
 }
 
 export type MapProps = {
@@ -118,6 +130,7 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
       craft: LocatedCraft;
       element: HTMLElement;
       setSelected: (selected: boolean) => void;
+      setScale: (scale: number) => void;
     }[]
   >([]);
   // `globalThis.Map` because this component is itself named `Map`, which
@@ -191,6 +204,11 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
     map.on("zoomend", updateCraftInView);
     map.on("moveend", updateCraftInView);
 
+    map.on("zoom", () => {
+      const scale = pinScaleForZoom(map.getZoom());
+      craftMarkersRef.current.forEach(({ setScale }) => setScale(scale));
+    });
+
     Promise.all([getCrafts(), getUsers()])
       .then(([fetchedCrafts, users]) => {
         crafts = fetchedCrafts.filter(
@@ -209,10 +227,11 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
         craftTagsRef.current = craftTags;
 
         craftMarkersRef.current = crafts.map((craft) => {
-          const { root, setSelected } = createCraftPinElement(
+          const { root, setSelected, setScale } = createCraftPinElement(
             craft.successorCount,
             craft.address,
           );
+          setScale(pinScaleForZoom(map.getZoom()));
 
           new Marker({ element: root })
             .setLngLat([craft.longitude, craft.latitude])
@@ -228,7 +247,7 @@ export function Map({ onCraftClick, onCraftInView, filterTag }: MapProps) {
             onCraftClick?.(craft);
           });
 
-          return { craft, element: root, setSelected };
+          return { craft, element: root, setSelected, setScale };
         });
 
         applyCraftFilter();
