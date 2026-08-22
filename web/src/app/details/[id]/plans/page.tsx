@@ -63,7 +63,9 @@ const Plans = () => {
                   type="button"
                   onClick={() => setSelectedSupportId(support.supportId)}
                   className={`rounded-lg border p-3.25 text-left ${
-                    selected ? "border-[#5E7231] border-2" : "border-2"
+                    selected
+                      ? "border-[#5E7231] border-2"
+                      : "border-2 border-[#BBBBBB]"
                   }`}
                 >
                   <div className="flex items-center justify-between">
