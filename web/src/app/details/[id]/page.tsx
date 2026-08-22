@@ -363,7 +363,9 @@ const Detail = () => {
                     type="button"
                     onClick={() => setSelectedSupportId(support.supportId)}
                     className={`rounded-lg border p-3.25 text-left cursor-pointer ${
-                      selected ? "border-[#A6B28B] border-2" : "border-2"
+                      selected
+                        ? "border-[#A6B28B] border-2"
+                        : "border-[#BBBBBB] border-2"
                     }`}
                   >
                     <div className="flex items-center justify-between">

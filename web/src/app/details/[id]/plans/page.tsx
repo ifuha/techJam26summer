@@ -65,7 +65,7 @@ const Plans = () => {
                   className={`rounded-lg border p-3.25 text-left ${
                     selected
                       ? "border-[#5E7231] border-2"
-                      : "border-2 border-[#BBBBBB]"
+                      : "border-[#BBBBBB] border-2"
                   }`}
                 >
                   <div className="flex items-center justify-between">
