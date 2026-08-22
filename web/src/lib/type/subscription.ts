@@ -1,3 +1,5 @@
+import type { IconName } from "@/components/icons/icon";
+
 // POST /api/SubScription (request)
 export type SubscriptionCreateRequest = {
   supportId: string;
@@ -21,6 +23,7 @@ export type MySubscription = {
   subscriptionId: string;
   supportId: string;
   supportName: string;
+  supportIcon: IconName;
   amount: number;
   isMonthly: boolean;
   creatorUserId: string;
@@ -40,6 +43,7 @@ export type CreatorSupporter = {
   supporterAvatar: string | null;
   supportId: string;
   supportName: string;
+  supportIcon: IconName;
   amount: number;
   createAt: string;
   isThanked: boolean;

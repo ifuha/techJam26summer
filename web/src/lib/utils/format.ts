@@ -34,9 +34,3 @@ export const formatDate = (date: string | Date): string => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}.${month}.${day}`;
 };
-
-export const getPlanIcon = (planName: string): "leaf" | "star" | "pro" => {
-  if (planName.includes("プレミアム")) return "pro";
-  if (planName.includes("スタンダード")) return "star";
-  return "leaf";
-};

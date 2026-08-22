@@ -20,7 +20,6 @@ import {
   formatCategoryLocation,
   formatCount,
   formatDuration,
-  getPlanIcon,
 } from "@/lib/utils/format";
 
 function StatCard({
@@ -370,7 +369,7 @@ const Detail = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Icon name={getPlanIcon(support.name)} size={60} />
+                        <Icon name={support.icon} size={60} />
                         <div className="text-[15px] font-bold text-[#000000]">
                           {support.name}
                         </div>

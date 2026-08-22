@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { CreatorSupporter } from "@/lib/type";
+import type { IconName } from "@/components/icons/icon";
 import { getMySupporters, getUserAccount } from "@/lib/api";
-import { formatCount, getPlanIcon } from "@/lib/utils/format";
+import { formatCount } from "@/lib/utils/format";
 import { getUserId } from "@/lib/utils/access-token";
 
 function StatCard({ label, value }: { label: string; value: string }) {
@@ -52,10 +53,15 @@ const Sales = () => {
   ).length;
 
   const planBreakdown = supporters.reduce<
-    Record<string, { count: number; amount: number }>
+    Record<string, { icon: IconName; count: number; amount: number }>
   >((acc, s) => {
-    const current = acc[s.supportName] ?? { count: 0, amount: 0 };
+    const current = acc[s.supportName] ?? {
+      icon: s.supportIcon,
+      count: 0,
+      amount: 0,
+    };
     acc[s.supportName] = {
+      icon: current.icon,
       count: current.count + 1,
       amount: current.amount + s.amount,
     };
@@ -99,7 +105,7 @@ const Sales = () => {
               {Object.entries(planBreakdown).map(([name, data]) => (
                 <div key={name} className="flex items-center gap-2 px-3 py-2.75">
                   <div className="text-[#5E7231]">
-                    <Icon name={getPlanIcon(name)} size={18} />
+                    <Icon name={data.icon} size={18} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[13px] text-[#000000]">{name}</div>

@@ -6,7 +6,7 @@ import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { Support, UserPublic } from "@/lib/type";
 import { getSupportsByCreator, getUser } from "@/lib/api";
-import { formatCount, getPlanIcon } from "@/lib/utils/format";
+import { formatCount } from "@/lib/utils/format";
 
 const Plans = () => {
   const router = useRouter();
@@ -70,7 +70,7 @@ const Plans = () => {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Icon name={getPlanIcon(support.name)} size={60} />
+                      <Icon name={support.icon} size={60} />
                       <div className="text-[15px] font-bold text-[#000000]">
                         {support.name}
                       </div>

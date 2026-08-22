@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Icon } from "@/components/icons/icon";
 import type { Support, UserPublic } from "@/lib/type";
 import { getSupportStatus, getUser, subscribe } from "@/lib/api";
-import { formatCount, getPlanIcon } from "@/lib/utils/format";
+import { formatCount } from "@/lib/utils/format";
 
 function CheckoutContent() {
   const router = useRouter();
@@ -89,7 +89,7 @@ function CheckoutContent() {
         <div className="mt-3.25 rounded-lg border p-3.25 flex items-center gap-3">
           {support && (
             <div className="text-[#5E7231]">
-              <Icon name={getPlanIcon(support.name)} size={36} />
+              <Icon name={support.icon} size={36} />
             </div>
           )}
           <div className="flex-1 min-w-0">

@@ -43,9 +43,11 @@ const icons = {
   plus: Plus,
   chart: Chart,
 } as const;
+export type IconName = keyof typeof icons;
+
 export type IconProps = {
   size: number;
-  name: keyof typeof icons;
+  name: IconName;
 };
 
 export function Icon({ size, name }: IconProps) {

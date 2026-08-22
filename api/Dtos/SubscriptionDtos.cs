@@ -10,6 +10,7 @@ public record MySubscriptionDto(
   Guid SubscriptionId,
   Guid SupportId,
   string SupportName,
+  string SupportIcon,
   int Amount,
   bool IsMonthly,
   Guid CreatorUserId,
@@ -27,6 +28,7 @@ public record CreatorSupporterDto(
   string? SupporterAvatar,
   Guid SupportId,
   string SupportName,
+  string SupportIcon,
   int Amount,
   DateTime CreateAt,
   bool IsThanked);

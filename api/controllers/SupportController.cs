@@ -18,7 +18,7 @@ public class SupportController : ControllerBase
   }
 
   private static readonly Func<Model.Support, SupportDto> ToDto = s => new SupportDto(
-    s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId);
+    s.SupportId, s.Name, s.Icon, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId);
 
   [Authorize]
   [HttpPost("/api/support")]
@@ -40,6 +40,7 @@ public class SupportController : ControllerBase
     {
       SupportId = Guid.NewGuid(),
       Name = request.Name,
+      Icon = request.Icon ?? "leaf",
       IsMonthly = request.IsMonthly,
       Amount = request.Amount,
       Benefits = request.Benefits ?? new List<string>(),
@@ -59,7 +60,7 @@ public class SupportController : ControllerBase
     var supports = await _db.Supports
       .Where(s => s.UserId == userId)
       .OrderBy(s => s.Amount)
-      .Select(s => new SupportDto(s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
+      .Select(s => new SupportDto(s.SupportId, s.Name, s.Icon, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
       .ToListAsync();
     return Ok(supports);
   }
@@ -69,7 +70,7 @@ public class SupportController : ControllerBase
   {
     var support = await _db.Supports
       .Where(s => s.SupportId == id)
-      .Select(s => new SupportDto(s.SupportId, s.Name, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
+      .Select(s => new SupportDto(s.SupportId, s.Name, s.Icon, s.IsMonthly, s.Amount, s.Benefits, s.CreateAt, s.UserId))
       .FirstOrDefaultAsync();
     return support is null ? NotFound() : Ok(support);
   }
@@ -90,6 +91,7 @@ public class SupportController : ControllerBase
     }
 
     if (request.Name is not null) support.Name = request.Name;
+    if (request.Icon is not null) support.Icon = request.Icon;
     if (request.IsMonthly is not null) support.IsMonthly = request.IsMonthly.Value;
     if (request.Amount is not null) support.Amount = request.Amount.Value;
     if (request.Benefits is not null) support.Benefits = request.Benefits;

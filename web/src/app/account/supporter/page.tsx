@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import { Head } from "@/components/head";
 import { Icon } from "@/components/icons/icon";
 import type { CreatorSubscriptionStats, CreatorSupporter } from "@/lib/type";
+import type { IconName } from "@/components/icons/icon";
 import {
   getCreatorStats,
   getMySupporters,
   getUserAccount,
 } from "@/lib/api";
-import { formatCount, formatDate, getPlanIcon } from "@/lib/utils/format";
+import { formatCount, formatDate } from "@/lib/utils/format";
 import { getUserId } from "@/lib/utils/access-token";
 
 const SupporterSummary = () => {
@@ -40,8 +41,11 @@ const SupporterSummary = () => {
       .catch((error) => console.error("Failed to load supporters:", error));
   }, []);
 
-  const planCounts = supporters.reduce<Record<string, number>>((acc, s) => {
-    acc[s.supportName] = (acc[s.supportName] ?? 0) + 1;
+  const planCounts = supporters.reduce<
+    Record<string, { icon: IconName; count: number }>
+  >((acc, s) => {
+    const current = acc[s.supportName] ?? { icon: s.supportIcon, count: 0 };
+    acc[s.supportName] = { icon: current.icon, count: current.count + 1 };
     return acc;
   }, {});
 
@@ -110,7 +114,7 @@ const SupporterSummary = () => {
               プラン別の応援者数
             </div>
             <div className="mt-2 rounded-lg border overflow-hidden">
-              {Object.entries(planCounts).map(([name, count], index) => (
+              {Object.entries(planCounts).map(([name, data], index) => (
                 <div
                   key={name}
                   className={`flex items-center gap-2 px-3 py-2.75 ${
@@ -118,13 +122,13 @@ const SupporterSummary = () => {
                   }`}
                 >
                   <div className="text-[#5E7231]">
-                    <Icon name={getPlanIcon(name)} size={18} />
+                    <Icon name={data.icon} size={18} />
                   </div>
                   <div className="flex-1 text-[13px] text-[#000000]">
                     {name}
                   </div>
                   <div className="text-[13px] font-bold text-[#000000]">
-                    {formatCount(count)}人
+                    {formatCount(data.count)}人
                   </div>
                 </div>
               ))}

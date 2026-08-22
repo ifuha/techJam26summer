@@ -65,6 +65,7 @@ public class SubscriptionController : ControllerBase
         s.SubscriptionId,
         s.SupportId,
         s.Support!.Name,
+        s.Support!.Icon,
         s.Support!.Amount,
         s.Support!.IsMonthly,
         s.Support!.UserId,
@@ -97,6 +98,7 @@ public class SubscriptionController : ControllerBase
         s.User!.Avatar,
         s.SupportId,
         s.Support!.Name,
+        s.Support!.Icon,
         s.Support!.Amount,
         s.CreateAt,
         _db.Thanks.Any(t => t.SubscriptionId == s.SubscriptionId)))

@@ -108,6 +108,7 @@ public class AuthController : ControllerBase
         {
           SupportId = Guid.NewGuid(),
           Name = "ライトプラン",
+          Icon = "leaf",
           IsMonthly = true,
           Amount = 500,
           Benefits = new List<string> { "活動記録の閲覧(限定コンテンツ含む)", "月1回の近況レポート" },
@@ -118,6 +119,7 @@ public class AuthController : ControllerBase
         {
           SupportId = Guid.NewGuid(),
           Name = "スタンダードプラン",
+          Icon = "star",
           IsMonthly = true,
           Amount = 1000,
           Benefits = new List<string> { "活動記録の閲覧(限定コンテンツ含む)", "月1回の近況レポート", "制作過程の動画配信" },
@@ -128,6 +130,7 @@ public class AuthController : ControllerBase
         {
           SupportId = Guid.NewGuid(),
           Name = "プレミアムプラン",
+          Icon = "pro",
           IsMonthly = true,
           Amount = 3000,
           Benefits = new List<string> { "活動記録の閲覧(限定コンテンツ含む)", "月1回の近況レポート", "制作過程の動画配信", "オンライン相談会への参加権" },
