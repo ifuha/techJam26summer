@@ -32,7 +32,8 @@ export function Head({ shadow = true }: HeadProps) {
       >
         <Icon name="menu" size={22} />
       </button>
-      <div className="text-[20px] text-black">Logo</div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logo.svg" alt="Logo" className="h-6 w-auto" />
       {isLoggedIn ? (
         <button
           type="button"

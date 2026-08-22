@@ -29,7 +29,10 @@ const Login = () => {
   return (
     <div className="w-screen min-h-dvh bg-[#FAF9F6]">
       <div className="max-w-sm mx-auto px-4 pt-10 pb-16">
-        <div className="text-center text-[20px] text-black">Logo</div>
+        <div className="flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Logo" className="h-7 w-auto" />
+        </div>
 
         <div className="mt-6 text-[20px] font-bold text-[#000000]">ログイン</div>
         <p className="mt-1 text-[13px] text-gray-500">
