@@ -79,12 +79,9 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-6 flex flex-col items-center gap-2 text-[13px]">
-          <Link href="/register/common" className="text-[#5E7231] underline">
-            一般ユーザーとして新規登録
-          </Link>
-          <Link href="/register/job" className="text-[#5E7231] underline">
-            継承者として新規登録
+        <div className="mt-6 flex justify-center text-[13px]">
+          <Link href="/register" className="text-[#5E7231] underline">
+            新規登録
           </Link>
         </div>
       </div>
